@@ -1,5 +1,5 @@
 ﻿/** 
- * @license SmallColorPicker v1.0.0 | (c) 2013 Antelle | https://github.com/antelle/SmallColorPicker/blob/master/MIT-LICENSE.txt
+ * @license SmallColorPicker v1.0.0 | (c) 2013 Antelle | https://github.com/antelle/small-color-picker/blob/master/MIT-LICENSE.txt
  */
 
 // Permission is hereby granted, free of charge, to any person obtaining

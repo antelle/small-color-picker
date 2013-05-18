@@ -13,7 +13,7 @@ module.exports = function(grunt) {
         },
         uglify: {
             options: {
-                banner: "/*! <%= pkg.name %> v<%= pkg.version %>  | (c) <%= grunt.template.today('yyyy') %> Antelle | https://github.com/antelle/SmallColorPicker/blob/master/MIT-LICENSE.txt */\n"
+                banner: "/*! <%= pkg.name %> v<%= pkg.version %>  | (c) <%= grunt.template.today('yyyy') %> Antelle | https://github.com/antelle/small-color-picker/blob/master/MIT-LICENSE.txt */\n"
             },
             color_picker: {
                 files: {
