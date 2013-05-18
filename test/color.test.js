@@ -10,9 +10,14 @@ test("Constructor with number", function() {
     equal(color.val, 0x123456, "Value is set");
 });
 
-test("Constructor with string", function() {
+test("Constructor with hex string", function() {
     var color = new SmallColorPicker.Color("#123456");
     equal(color.val, 0x123456, "Value is parsed");
+});
+
+test("Constructor rgb string", function() {
+    var color = new SmallColorPicker.Color("rgb(1, 2, 3);");
+    equal(color.val, 0x010203, "Value is parsed");
 });
 
 function rgbPartsTest(val, a, b, c) {

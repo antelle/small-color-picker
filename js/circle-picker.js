@@ -191,6 +191,7 @@
          * @param e
          */
         function handleCircleMouseDown(e) {
+            e.preventDefault();
             processCircleColorChangeEvent(e.pageX, e.pageY);
             toggleGlobalSelection(false);
             $(document)
@@ -203,6 +204,7 @@
          * @param e
          */
         function handleSquareMouseDown(e) {
+            e.preventDefault();
             processSquareColorChangeEvent(e.pageX, e.pageY);
             toggleGlobalSelection(false);
             $(document)

@@ -29,7 +29,7 @@
 
     /**
      * Color convertible to different formats.
-     * @param {string|number} [val] - Hex color value
+     * @param {string|number} [val] - Hex or rgb color value
      * @constructor
      */
     SmallColorPicker.Color = function(val) {
@@ -37,7 +37,12 @@
         if (typeof val === "number") {
             this.val = val;
         } else if (typeof val == "string") {
-            this.val = parseInt(val.substr(1), 16);
+            if (val.charAt(0) === "#") {
+                this.val = parseInt(val.substr(1), 16);
+            } else {
+                var match = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)/g.exec(val);
+                this.setRgb(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+            }
         }
     };
 
