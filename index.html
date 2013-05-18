@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SmallColorPicker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap-responsive.min.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/prettify/prettify.css"/>
+    <link rel="stylesheet" type="text/css" href="css/site.css"/>
+    <link rel="stylesheet" type="text/css" href="scp/css/small-color-picker.css"/>
+    <link rel="stylesheet" type="text/css" href="scp/css/color-buttons.css"/>
+    <script src="lib/jquery/jquery-2.0.0.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="lib/prettify/prettify.js"></script>
+    <script src="lib/prettify/lang-css.js"></script>
+    <script src="scp/js/small-color-picker.min.js"></script>
+    <script src="js/home.js"></script>
+</head>
+<body>
+    <div id="wrap">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="index.html">SmallColorPicker</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+                    <p>SmallColorPicker is a library which allows you to create a minimalistic color picker with jQuery.
+                        Also it contains CSS styles for color selection buttons.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span2">
+                    <h4>Color picker</h4>
+                    <p>Here's it:</p>
+                    <div id="color-selector-box"></div>
+                    <div id="color-selector-text" class="spaced-top-small"></div>
+                </div>
+                <div class="span10">
+                    <h4>Buttons</h4>
+                    <p>Buttons are in separate CSS file, <a href="https://github.com/antelle/small-color-picker/blob/build-v1/color-buttons.css">color-buttons.css</a>; this CSS has no dependencies and can be used standalone.</p>
+                    <div class="row" id="buttons">
+                        <div class="span5">
+                            <div>
+                                <div><code>color-btn-vertical</code></div>
+                                <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>#f0631d</div>
+                                <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>org</div>
+                                <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>choose your favorite color</div>
+                            </div>
+                            <div>
+                                <div><code>color-btn-horizontal</code></div>
+                                <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>#b81221</div>
+                                <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>red</div>
+                                <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>click also me</div>
+                            </div>
+                            <div>
+                                <div><code>color-btn-left</code></div>
+                                <div class="color-btn color-btn-left"><b style="background-color: #e861b0;"></b>#e861b0</div>
+                                <div class="color-btn color-btn-left"><b style="background-color: #e861b0;"></b>pink</div>
+                                <div class="color-btn color-btn-left"><b style="background-color: #e861b0;"></b>this button is pretty</div>
+                            </div>
+                        </div>
+                        <div class="span5">
+                            <div>
+                                <div><code>color-btn-square</code></div>
+                                <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>#990e8d</div>
+                                <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>vio</div>
+                                <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>please select a color</div>
+                            </div>
+                            <div>
+                                <div><code>color-btn-circle</code></div>
+                                <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>#800080</div>
+                                <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>pur</div>
+                                <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>yet more buttons</div>
+                            </div>
+                            <div>
+                                <div><code>color-btn-right</code></div>
+                                <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>#4154e0</div>
+                                <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>blue</div>
+                                <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>and more buttons</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="spaced-top-small">
+                        Use this snippet to create buttons:
+                        <pre class="prettyprint lang-html">&lt;div class="color-btn <span class="custom" title="button color sample style" id="span-code-style">color-btn-left</span>"&gt;&lt;b style="background-color: <span class="custom" title="button color sample background color" id="span-code-color">#ff66bd</span>;"&gt;&lt;/b&gt;<span class="custom" title="button text" id="span-code-text">text</span>&lt;/div&gt;</pre>
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
+                    <h4>Browsers suport</h4>
+                    <p>SmallColorPicker makes use of CSS3 features. Supported browsers are Chrome, Safari, Firefox, Opera, IE&#8805;9.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
+                    <h4>License</h4>
+                    <p>SmallColorPicker is licensed under MIT. If you find it helpful, you can use it as you wish, no attribution is required.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
+                    <h4>Download</h4>
+                    <p>You can download SmallColorPicker compressed production version <a href="https://github.com/antelle/small-color-picker/archive/build-v1.zip">here</a> or go to <a href="https://github.com/antelle/small-color-picker">GitHub repository</a> with full source code (you will also find build instructions there). <br />Website background by <a href="http://subtlepatterns.com/">Subtle Patterns</a>.</p>
+                </div>
+            </div>
+            <div id="spacer"></div>
+        </div>
+    </div>
+    <div id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="span12 muted clearfix">
+                    <p class="pull-left">SmallColorPicker is created by <a href="http://antelle.net">Antelle</a></p>
+                    <div class="pull-right" id="logo-muted"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

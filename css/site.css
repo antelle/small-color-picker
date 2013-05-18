@@ -1,0 +1,62 @@
+html, body {
+    height: 100%;
+}
+body {
+    background: #fdfdfd url(../img/patterns/furley_bg/furley_bg.png);
+}
+body {
+    background: #fafafa;
+}
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -51px;
+}
+#wrap .container>.row:first-child {
+    margin-top: 20px;
+}
+#spacer {
+    height: 51px;
+}
+#footer {
+    height: 50px;
+    border-top: 1px solid #eee;
+}
+#footer p {
+    margin-top: 20px;
+}
+#logo-muted {
+    width: 32px;
+    height: 32px;
+    background: transparent url(../img/logo-muted.png) center center no-repeat;
+    margin-top: 12px;
+}
+.spaced-top-small {
+    margin-top: 15px;
+}
+#buttons>div>div:not(:first-child) {
+    margin-top: 10px;
+}
+pre .custom {
+    text-decoration: underline;
+    color: #d14;
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (   min--moz-device-pixel-ratio: 2),
+only screen and (     -o-min-device-pixel-ratio: 2/1),
+only screen and (        min-device-pixel-ratio: 2),
+only screen and (                min-resolution: 192dpi),
+only screen and (                min-resolution: 2dppx) {
+    body {
+        background: #fdfdfd url(../img/furley_bg/furley_bg_@2X.png);
+        background-size: 256px;
+    }
+    #logo-muted {
+        background: transparent url(../img/logo-muted@2x.png);
+        background-size: 32px;
+    }
+}
+body.no-bg {
+    background: #fafafa;
+}
