@@ -41,6 +41,12 @@ $(function() {
         colorPicker.setColors(color);
     });
 
+    $("#link-toggle-source").click(function(e) {
+        e.preventDefault();
+        $("#pre-init-src").toggle();
+        $(this).text($("#pre-init-src").is(":visible") ? "collapse example" : "expand example");
+    });
+
     prettyPrint();
 });
 

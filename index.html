@@ -98,6 +98,35 @@
             </div>
             <div class="row">
                 <div class="span12">
+                    <h4>Installation</h4>
+                    <p>Download the library, include CSS and JS files and write some initialization code (refer to <code>SmallColorPicker.defaults</code> in the <a href="https://github.com/antelle/small-color-picker/blob/master/js/circle-picker.js">source code</a> for available options).</p>
+                    <p><a id="link-toggle-source" href="#" class="on-page-link">expand example</a></p>
+                    <pre style="display: none;" id="pre-init-src" class="prettyprint lang-js">var colorPicker = window.colorPicker = new SmallColorPicker.CirclePicker({
+    placement: {
+        position: "static",
+        parent: $("#color-selector-box")
+    },
+    colors: {
+        colorOld: "#990e8d",
+        colorNew: "#6d1f7a"
+    },
+    behavior: {
+        hideOnSelect: false
+    },
+    events: {
+        ok: function(color) {
+            showColorPickerText("Selected color: " + color);
+        },
+        cancel: function(color) {
+            showColorPickerText("Cancelled");
+        }
+    }
+});
+colorPicker.show();</pre>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span12">
                     <h4>Browsers suport</h4>
                     <p>SmallColorPicker makes use of CSS3 features. Supported browsers are Chrome, Safari, Firefox, Opera, IE&#8805;9.</p>
                 </div>
