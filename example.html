@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SmallColorPicker Example</title>
+    <link rel="stylesheet/less" type="text/css" href="less/circle-picker.less" />
+    <link rel="stylesheet/less" type="text/css" href="less/color-buttons.less" />
+    <script src="lib/jquery/jquery-2.0.0.min.js"></script>
+    <script src="lib/less/less-1.3.3.min.js"></script>
+    <script src="js/color.js"></script>
+    <script src="js/transform2d.js"></script>
+    <script src="js/circle-picker.js"></script>
+    <style>
+body {
+    font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+    </style>
+    <script>
+$(function() {
+    var colorPicker = window.colorPicker = new SmallColorPicker.CirclePicker({
+        placement: {
+            position: "static",
+            parent: $("#color-selector-box")
+        },
+        colors: {
+            colorOld: "#990e8d",
+            colorNew: "#6d1f7a"
+        },
+        events: {
+            ok: function(color) {
+                console.log("ok", color);
+            }
+        }
+    });
+    $("#link-show").click(function(e) {
+        e.preventDefault();
+        colorPicker.toggle();
+    });
+    colorPicker.setColors("#6d1f7a", "#990e8d");
+    colorPicker.show();
+});
+    </script>
+</head>
+<body>
+    <div>Click <a href="#" id="link-show">here</a> to select color.</div>
+    <div id="color-selector-box"></div>
+    <div id="buttons">
+        <p>
+            <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>#990e8d</div>
+            <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>#f0631d</div>
+            <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>#b81221</div>
+            <div class="color-btn color-btn-left"><b style="background-color: #ff66bd;"></b>#ff66bd</div>
+            <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>#4154e0</div>
+            <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>#800080</div>
+        </p>
+
+        <p>
+            <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>vio</div>
+            <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>org</div>
+            <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>red</div>
+            <div class="color-btn color-btn-left"><b style="background-color: #ff66bd;"></b>pink</div>
+            <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>blue</div>
+            <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>pur</div>
+        </p>
+        <p>
+            <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>please select a color here</div>
+            <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>or choose your favorite color with me</div>
+            <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>click also me</div>
+            <div class="color-btn color-btn-left"><b style="background-color: #ff66bd;"></b>this button is pretty too</div>
+            <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>and more buttons</div>
+            <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>yet more buttons</div>
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+﻿@imgPath: "../img/";
+@totalWidth: 130px;
+@totalHeight: 172px;
+@colorBlockWidth: 50px;
+@colorSampleLight: black;
+@colorSampleDark: white;
+
+.no-select() {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.transform-origin(@val) {
+  transform-origin: 0 0;
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  -o-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+}
+
+.s-c-p {
+  border: 1px dotted #ddd;
+  width: @totalWidth;
+  height: @totalHeight;
+  box-shadow: -1px 1px 4px rgba(100, 100, 100, 0.15);
+
+  .s-c-p-circle {
+    @padding: 5px;
+    @diameter: @totalWidth - @padding*2;
+    position: absolute;
+    top: @padding;
+    left: @padding;
+    width: @diameter;
+    height: @diameter;
+    background: url("@{imgPath}color-circle.png") no-repeat;
+    background-size: @diameter @diameter;
+    .no-select();
+    border-radius: @totalWidth;
+    box-shadow: -1px 1px 2px rgba(100, 100, 100, 0.4) inset, -1px 1px 2px rgba(100, 100, 100, 0.2);
+
+    .s-c-p-circle-inner {
+      @paddingInner: 11px;
+      @diameterInner: @diameter - @paddingInner*2;
+      pointer-events: none;
+      position: absolute;
+      top: @paddingInner;
+      left: @paddingInner;
+      width: @diameterInner;
+      height: @diameterInner;
+      background-color: white;
+      border-radius: @diameterInner;
+      box-shadow: -1px 1px 2px rgba(100, 100, 100, 0.4);
+      .no-select();
+    }
+  }
+  .s-c-p-circle-mark, .s-c-p-circle-mark:active, .s-c-p-circle-mark:hover {
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 90%);
+    width: 4px;
+    height: 4px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 0 0 4px 4px;
+    .transform-origin(0 0);
+    .no-select();
+  }
+  .s-c-p-square {
+    @width: 66px;
+    @padding: (@totalWidth - @width)/2;
+    cursor: default;
+    position: absolute;
+    top: @padding;
+    left: @padding;
+    width: @width;
+    height: @width;
+    box-shadow: -1px 1px 4px rgba(100, 100, 100, 0.3);
+    .no-select();
+  }
+  .s-c-p-square-mark {
+    pointer-events: none;
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border: 1px solid white;
+    border-radius: 4px;
+    .no-select();
+  }
+
+  .s-c-p-color {
+    position: absolute;
+    top: @totalWidth + 2;
+    width: @colorBlockWidth;
+    text-align: center;
+    font-size: 10px;
+    line-height: 10px;
+  }
+  .s-c-p-color-old {
+    left: @totalWidth/2 - @colorBlockWidth;
+    color: #eee;
+  }
+  .s-c-p-color-new {
+    left: @totalWidth/2;
+    color: #666;
+  }
+
+  .s-c-p-sample {
+    position: absolute;
+    top: @totalWidth + 15;
+    width: @colorBlockWidth;
+    height: 15px;
+    padding: 4px 0 1px 0;
+    cursor: pointer;
+    text-align: center;
+    font-size: 12px;
+    line-height: 13px;
+    overflow: hidden;
+    border-radius: 1px;
+    .no-select();
+    color: fade(@colorSampleDark, 25%);
+  }
+  .s-c-p-sample:hover {
+    color: fade(@colorSampleDark, 50%);
+  }
+  .s-c-p-sample:active {
+    box-shadow: 0 0 10px rgba(50, 50, 50, 30%) inset;
+    color: fade(@colorSampleDark, 90%);
+  }
+  .s-c-p-sample.s-c-p-light {
+    color: fade(@colorSampleLight, 25%);
+  }
+  .s-c-p-sample.s-c-p-light:hover {
+    color: fade(@colorSampleLight, 50%);
+  }
+  .s-c-p-sample.s-c-p-light:active {
+    color: fade(@colorSampleLight, 90%);
+  }
+  .s-c-p-sample-old {
+    left: @totalWidth/2 - @colorBlockWidth;
+  }
+  .s-c-p-sample-new {
+    left: @totalWidth/2;
+  }
+}

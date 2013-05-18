@@ -1,0 +1,165 @@
+@height: 15px;
+@shadow: -1px 2px 3px rgba(0, 0, 0, 0.1);
+@border-radius: 2px;
+@padding-top: 7px;
+@padding-bottom: 6px;
+@padding-side: 5px;
+
+.gradient(@from, @to) {
+  background: @from;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@from', endColorstr='@to');
+  background: linear-gradient(top, @from, @to);
+  background: -webkit-gradient(linear, left top, left bottom, from(@from), to(@to));
+  background: -moz-linear-gradient(top, @from, @to);
+  background: -o-linear-gradient(top, @from, @to);
+}
+.shadow (@shadow1) {
+  -moz-box-shadow: @shadow1;
+  -webkit-box-shadow: @shadow1;
+  box-shadow: @shadow1;
+}
+.shadow (@shadow1, @shadow2) {
+  @shadow: @shadow1, @shadow2;
+  -moz-box-shadow: @shadow;
+  -webkit-box-shadow: @shadow;
+  box-shadow: @shadow;
+}
+
+.color-btn {
+  display: inline-block;
+  position: relative;
+  min-width: 12px;
+
+  color: #333;
+  font-size: 13px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  padding: @padding-top @padding-side @padding-bottom @padding-side;
+  text-align: left;
+  text-shadow: 0px 1px 0 rgba(255, 255, 255, 0.7);
+  margin: 2px;
+  height: @height;
+  line-height: @height;
+
+  cursor: pointer;
+
+  border: 1px solid #ccc;
+  border-radius: @border-radius;
+  .gradient(#f5f5f5, #dddddd);
+  .shadow(@shadow);
+
+  &:hover, &:active {
+    .gradient(#fdfdfd, #eeeeee);
+    border: 1px solid #dddddd;
+  }
+  &:active {
+    .shadow(@shadow, -1px 3px 7px rgba(0, 0, 0, 0.1) inset);
+  }
+  b {
+    .shadow(@shadow, 0px -1px 0px rgba(255, 255, 255, 0.15) inset);
+  }
+}
+
+.color-btn-square {
+  @offset: 15px;
+  b {
+    border-radius: 1px;
+    width: @offset;
+    height: 15px;
+    display: inline-block;
+    vertical-align: top;
+    margin: -1px 3px 0 0;
+  }
+}
+
+.color-btn-vertical {
+  @offset: 3px;
+  b {
+    border-radius: 1px;
+    width: @offset;
+    height: 17px;
+    display: inline-block;
+    vertical-align: top;
+    margin: -1px 3px 0 0;
+  }
+}
+
+.color-btn-circle {
+  @offset: 5px;
+  b {
+    border-radius: @offset;
+    width: @offset;
+    height: @offset;
+    display: inline-block;
+    vertical-align: top;
+    margin: 5px 3px 0 0;
+  }
+}
+
+.color-btn-horizontal {
+  text-align: center;
+  b {
+    border-radius: 1px;
+    position: relative;
+    top: 15px;
+    left: 0;
+    height: 3px;
+    display: block;
+    margin-bottom: -3px;
+  }
+}
+
+.color-btn-left {
+  @offset: 5px;
+  padding-left: @padding-side + @offset + 3;
+  b {
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    width: @offset + @padding-side - 1;
+    height: @height + @padding-top + @padding-bottom;
+    display: inline-block;
+    vertical-align: top;
+    border-bottom-left-radius: @border-radius;
+    border-top-left-radius: @border-radius;
+    border-left: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-right: none;
+    .gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1));
+    .shadow(none);
+  }
+  &:hover b, &:active b {
+    .gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.05));
+  }
+  &:active b {
+    .shadow(0 8px 7px -5px rgba(0, 0, 0, 0.1) inset)
+  }
+}
+
+.color-btn-right {
+  @offset: 5px;
+  padding-right: @padding-side + @offset + 3;
+  b {
+    position: absolute;
+    right: -1px;
+    top: -1px;
+    width: @offset + @padding-side - 1;
+    height: @height + @padding-top + @padding-bottom;
+    display: inline-block;
+    vertical-align: top;
+    border-bottom-right-radius: @border-radius;
+    border-top-right-radius: @border-radius;
+    border-right: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-right: none;
+    .gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1));
+    .shadow(none);
+  }
+  &:hover b, &:active b {
+    .gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.05));
+  }
+  &:active b {
+    .shadow(0 8px 7px -5px rgba(0, 0, 0, 0.1) inset)
+  }
+}
