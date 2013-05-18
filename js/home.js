@@ -35,7 +35,7 @@ $(function() {
 
     $(".color-btn").click(function() {
         var cls = this.className.replace("color-btn ", "");
-        var color = /#\w+/g.exec($("b", this).attr("style"))[0];
+        var color = new SmallColorPicker.Color($("b", this).css("background-color")).toHex();
         $("#span-code-style span").html(cls);
         $("#span-code-color span").html(color);
         colorPicker.setColors(color);
