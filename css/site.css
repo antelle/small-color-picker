@@ -4,9 +4,6 @@ html, body {
 body {
     background: #fdfdfd url(../img/furley_bg/furley_bg.png);
 }
-body {
-    background: #fafafa;
-}
 #wrap {
     min-height: 100%;
     height: auto !important;
