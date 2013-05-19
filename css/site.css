@@ -35,8 +35,9 @@ body {
 #buttons>div>div:not(:first-child) {
     margin-top: 10px;
 }
-#color-selector-text {
+#color-selector-text-wrap {
     height: 20px;
+    display: block;
 }
 pre.pre-small-margin {
     margin-bottom: 2px;
