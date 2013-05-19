@@ -22,7 +22,7 @@ $(function() {
                 ok: function(color) {
                     showColorPickerText("Selected: " + color);
                 },
-                cancel: function(color) {
+                cancel: function() {
                     showColorPickerText("Cancelled");
                 }
             }
@@ -71,8 +71,9 @@ $(function() {
 
     $(".link-toggle-source").click(function(e) {
         e.preventDefault();
-        $("#" + $(this).data("src-id")).toggle();
-        $(this).text($("#pre-init-src").is(":visible") ? "collapse example" : "expand example");
+        var el = $("#" + $(this).data("src-id"));
+        el.toggle();
+        $(this).text(el.is(":visible") ? "collapse example" : "expand example");
     });
 
     prettyPrint();
