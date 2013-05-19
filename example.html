@@ -13,17 +13,24 @@
 body {
     font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+#buttons {
+    margin-top: 10px;
+}
     </style>
     <script>
 $(function() {
     var colorPicker = window.colorPicker = new SmallColorPicker.CirclePicker({
         placement: {
             position: "static",
-            parent: $("#color-selector-box")
+            parent: $("#color-selector-box"),
+            popup: false
         },
         colors: {
             colorOld: "#990e8d",
             colorNew: "#6d1f7a"
+        },
+        behavior: {
+            hideOnSelect: false
         },
         events: {
             ok: function(color) {
@@ -37,6 +44,43 @@ $(function() {
     });
     colorPicker.setColors("#6d1f7a", "#990e8d");
     colorPicker.show();
+
+    $(".color-btn").click(function() {
+        if (window.popupPicker) {
+            if (popupPicker.parent()[0] === this && popupPicker.isVisible()) {
+                popupPicker.hide();
+            } else {
+                popupPicker.parent(this);
+                popupPicker.show();
+            }
+            return;
+        }
+        var el = $(this);
+        var bgEl = $("b", this);
+        var color = new SmallColorPicker.Color(bgEl.css("background-color")).toHex();
+        window.popupPicker = new SmallColorPicker.CirclePicker({
+            placement: {
+                parent: this,
+                popup: true,
+                left: "200px"
+            },
+            colors: {
+                colorOld: color,
+                colorNew: color
+            },
+            events: {
+                ok: function(resultColor) {
+                    bgEl.css("background-color", resultColor);
+                    if (el.text().charAt(0) == "#") {
+                        el.contents().last().remove();
+                        el.append(resultColor);
+                    }
+                }
+            }
+        });
+        popupPicker.show();
+        $(this).data("picker", popupPicker);
+    });
 });
     </script>
 </head>
@@ -44,31 +88,40 @@ $(function() {
     <div>Click <a href="#" id="link-show">here</a> to select color.</div>
     <div id="color-selector-box"></div>
     <div id="buttons">
-        <p>
+        <div>
+            <div class="color-btn color-btn-fixed color-btn-square"><b style="background-color: #990e8d;"></b>#990e8d</div>
+            <div class="color-btn color-btn-fixed color-btn-vertical"><b style="background-color: #f0631d;"></b>#f0631d</div>
+            <div class="color-btn color-btn-fixed color-btn-horizontal"><b style="background-color: #b81221;"></b>#b81221</div>
+            <div class="color-btn color-btn-fixed color-btn-left"><b style="background-color: #ff66bd;"></b>#ff66bd</div>
+            <div class="color-btn color-btn-fixed color-btn-right"><b style="background-color: #4154e0;"></b>#4154e0</div>
+            <div class="color-btn color-btn-fixed color-btn-circle"><b style="background-color: #800080;"></b>#800080</div>
+        </div>
+        
+        <div>
             <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>#990e8d</div>
             <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>#f0631d</div>
             <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>#b81221</div>
             <div class="color-btn color-btn-left"><b style="background-color: #ff66bd;"></b>#ff66bd</div>
             <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>#4154e0</div>
             <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>#800080</div>
-        </p>
+        </div>
 
-        <p>
+        <div>
             <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>vio</div>
             <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>org</div>
             <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>red</div>
             <div class="color-btn color-btn-left"><b style="background-color: #ff66bd;"></b>pink</div>
             <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>blue</div>
             <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>pur</div>
-        </p>
-        <p>
+        </div>
+        <div>
             <div class="color-btn color-btn-square"><b style="background-color: #990e8d;"></b>please select a color here</div>
             <div class="color-btn color-btn-vertical"><b style="background-color: #f0631d;"></b>or choose your favorite color with me</div>
             <div class="color-btn color-btn-horizontal"><b style="background-color: #b81221;"></b>click also me</div>
             <div class="color-btn color-btn-left"><b style="background-color: #ff66bd;"></b>this button is pretty too</div>
             <div class="color-btn color-btn-right"><b style="background-color: #4154e0;"></b>and more buttons</div>
             <div class="color-btn color-btn-circle"><b style="background-color: #800080;"></b>yet more buttons</div>
-        </p>
+        </div>
     </div>
 </body>
 </html>

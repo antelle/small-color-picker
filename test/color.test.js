@@ -20,6 +20,15 @@ test("Constructor rgb string", function() {
     equal(color.val, 0x010203, "Value is parsed");
 });
 
+test("Constructor invalid string", function() {
+    expect(1);
+    try {
+        var color = new SmallColorPicker.Color("rgb(,,);");
+    } catch (err) {
+        equal(err, "Invalid color: rgb(,,);", "Error is thrown");
+    }
+});
+
 function rgbPartsTest(val, a, b, c) {
     var color = new SmallColorPicker.Color(val);
     equal(color[a](), 0xaa, "First value read");

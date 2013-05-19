@@ -4,6 +4,8 @@
 @colorBlockWidth: 50px;
 @colorSampleLight: black;
 @colorSampleDark: white;
+@colorBorder: #ddd;
+@colorBg: #fcfcfc;
 
 .no-select() {
   user-select: none;
@@ -21,10 +23,28 @@
 }
 
 .s-c-p {
-  border: 1px dotted #ddd;
+  border: 1px dotted @colorBorder;
   width: @totalWidth;
   height: @totalHeight;
   box-shadow: -1px 1px 4px rgba(100, 100, 100, 0.15);
+
+  &.s-c-p-popup {
+    border: 1px solid @colorBorder;
+    background-color: @colorBg;
+    z-index: 100500;
+    .s-c-p-arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      color: @colorBorder;
+      .s-c-p-arrow-inner {
+        position: absolute;
+        width: 0;
+        height: 0;
+        color: @colorBg;
+      }
+    }
+  }
 
   .s-c-p-circle {
     @padding: 5px;

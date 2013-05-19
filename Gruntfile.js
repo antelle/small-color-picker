@@ -28,8 +28,8 @@ module.exports = function(grunt) {
                     yuicompress: true
                 },
                 files: {
-                    "../build-v1/css/small-color-picker.css": ["less/circle-picker.less"],
-                    "../build-v1/css/color-buttons.css": ["less/color-buttons.less"]
+                    "../build-v1/css/small-color-picker.min.css": ["less/circle-picker.less"],
+                    "../build-v1/css/color-buttons.min.css": ["less/color-buttons.less"]
                 }
             }
         },

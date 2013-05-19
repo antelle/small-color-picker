@@ -1,5 +1,5 @@
 ﻿/** 
- * @license SmallColorPicker v1.0.0 | (c) 2013 Antelle | https://github.com/antelle/small-color-picker/blob/master/MIT-LICENSE.txt
+ * @license SmallColorPicker | (c) 2013 Antelle | https://github.com/antelle/small-color-picker/blob/master/MIT-LICENSE.txt
  */
 
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,7 +35,8 @@
             position: "absolute",
             top: "0",
             left: "0",
-            parent: null
+            parent: null,
+            popup: false
         },
         colors: {
             colorOld: null,
@@ -65,10 +66,12 @@
         var _colorOld = new SmallColorPicker.Color(_opts.colors.colorOld);
         var _dom;
         var _domProps;
+        var _parent = _opts.placement.parent ? $(_opts.placement.parent) : null;
         var _squareRotation = 0;
         var _transforms = {};
         var _lastUserSquareX, _lastUserSquareY;
         var _browserFeatures;
+        var _resizeTimeout;
 
         /**
          * Initializes color picker before first control show.
@@ -102,6 +105,99 @@
         }
 
         /**
+         * Sets correct element position if the picker is displayed in popup.
+         */
+        function setPosition() {
+            if (!_opts.placement.popup || !_parent)
+                return;
+            if (_resizeTimeout) {
+                clearTimeout(_resizeTimeout);
+                _resizeTimeout = null;
+            }
+            var parentPosition = _parent.position(), parentWidth = _parent.outerWidth(), parentHeight = _parent.outerHeight(),
+                windowHeight = $(window).outerHeight(), windowWidth = $(window).width(),
+                width = _dom.el.outerWidth(), height = _dom.el.outerHeight(),
+                paddingToPageBorder = 10, innerArrowPadding = 1, smallPadding = 1,
+                arrowSize = 15,
+                offset = {}, arrowOffset = {}, arrowInnerOffset = {};
+
+            var spaceAbove = parentPosition.top - $(window).scrollTop();
+            var spaceBelow = windowHeight - parentHeight - spaceAbove;
+            var spaceLeft = parentPosition.left - $(window).scrollLeft();
+            var spaceRight = windowWidth - parentWidth - spaceLeft;
+
+            if (Math.max(spaceAbove, spaceBelow) > height + paddingToPageBorder && Math.min(spaceLeft, spaceRight) > width/2 - parentWidth/2 + paddingToPageBorder) {
+                offset.left = parentPosition.left + parentWidth/2 - width/2;
+                arrowOffset.left = width/2 - arrowSize;
+                arrowInnerOffset.left = -arrowSize;
+                if (spaceAbove > spaceBelow) {
+                    offset.top = parentPosition.top - height - arrowSize + 3;
+                    arrowOffset.top = height - 2;
+                    arrowInnerOffset.top = -arrowSize - innerArrowPadding;
+                    setArrowBorders("top", arrowSize);
+                } else {
+                    offset.top = parentPosition.top + parentHeight + smallPadding + arrowSize;
+                    arrowOffset.top = -arrowSize;
+                    arrowInnerOffset.top = innerArrowPadding;
+                    setArrowBorders("bottom", arrowSize);
+                }
+            } else {
+                offset.top = parentPosition.top + parentHeight/2 - height/2;
+                arrowOffset.top = height/2 - arrowSize;
+                arrowInnerOffset.top = -arrowSize;
+                if (spaceLeft > spaceRight) {
+                    offset.left = parentPosition.left - width - arrowSize + 2;
+                    arrowOffset.left = width - 1;
+                    arrowInnerOffset.left = -arrowSize - innerArrowPadding;
+                    setArrowBorders("left", arrowSize);
+                } else {
+                    offset.left = parentPosition.left + parentWidth + smallPadding + arrowSize;
+                    arrowOffset.left = -arrowSize;
+                    arrowInnerOffset.left = innerArrowPadding;
+                    setArrowBorders("right", arrowSize);
+                }
+            }
+            _dom.el.css(offset);
+            _dom.arrow.css(arrowOffset);
+            _dom.arrowInner.css(arrowInnerOffset);
+        }
+
+        /**
+         * Turns arrow by adjusting border heights.
+         * @param {string} placement - Arrow placement
+         * @param {number} arrowSize - Arrow size
+         */
+        function setArrowBorders(placement, arrowSize) {
+            var color = _dom.arrow.css("color");
+            var innerColor = _dom.arrowInner.css("color");
+            var opposite;
+            switch (placement) {
+                case "top":
+                    opposite = "bottom";
+                    break;
+                case "bottom":
+                    opposite = "top";
+                    break;
+                case "left":
+                    opposite = "right";
+                    break;
+                case "right":
+                    opposite = "left";
+                    break;
+            }
+            $.each(["top", "right", "bottom", "left"], function(ix, pos) {
+                var prop = "border-" + pos;
+                var borderColor = pos == placement ? color : "transparent";
+                var border = pos == opposite ? "none" : arrowSize + "px solid " + borderColor;
+                _dom.arrow.css(prop, border);
+
+                borderColor = pos == placement ? innerColor : "transparent";
+                border = pos == opposite ? "none" : arrowSize + "px solid " + borderColor;
+                _dom.arrowInner.css(prop, border);
+            });
+        }
+
+        /**
          * Created DOM elements.
          * Initializes _dom variable.
          */
@@ -109,7 +205,7 @@
             _dom = {};
             _dom.el = 
                 $("<div></div>")
-                    .appendTo(_opts.placement.parent || document.body)
+                    .appendTo(_opts.placement.popup || !_parent ? document.body : _parent)
                     .addClass("s-c-p")
                     .css({
                         position: _opts.placement.position,
@@ -118,6 +214,16 @@
                     });
             if (_dom.el.css("position") == "static")
                 _dom.el.css("position", "relative");
+            if (_opts.placement.popup) {
+                _dom.el.css("position", "absolute");
+                _dom.el.addClass("s-c-p-popup");
+                _dom.arrow = $("<div></div>")
+                    .appendTo(_dom.el)
+                    .addClass("s-c-p-arrow");
+                _dom.arrowInner = $("<div></div>")
+                    .appendTo(_dom.arrow)
+                    .addClass("s-c-p-arrow-inner");
+            }
             _dom.circle = $("<div></div>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-circle");
@@ -184,6 +290,9 @@
                 if (_opts.events.cancel)
                     _opts.events.cancel(_colorOld.toHex());
             });
+            if (_opts.placement.popup && _parent) {
+                $(window).resize(handleWindowResized);
+            }
         }
 
         /**
@@ -236,6 +345,15 @@
             $(document)
                 .off("mousemove", handleDocumentMouseMoveForCircle)
                 .off("mousemove", handleDocumentMouseMoveForSquare);
+        }
+
+        /**
+         * Adjusts popup placement when window is resized.
+         */
+        function handleWindowResized() {
+            if (isVisible() && _opts.placement.popup && !_resizeTimeout) {
+                _resizeTimeout = setTimeout(setPosition, 100);
+            }
         }
 
         /**
@@ -482,6 +600,14 @@
         }
 
         /**
+         * Gets state of the control.
+         * @returns {boolean}
+         */
+        function isVisible() {
+            return _dom && _dom.el && _dom.el.is(":visible");
+        }
+
+        /**
          * Hides color picker.
          */
         function hide() {
@@ -492,7 +618,7 @@
          * Hides or shows color picker.
          */
         this.toggle = function() {
-            if (_dom && _dom.el && _dom.el.is(":visible"))
+            if (this.isVisible())
                 this.hide();
             else
                 this.show();
@@ -510,8 +636,15 @@
             displayNewColorSample();
             moveMarks();
             _dom.el.show();
+            setPosition();
             getStyleProps();
         };
+
+        /**
+         * Gets state of the control.
+         * @returns {boolean}
+         */
+        this.isVisible = isVisible;
 
         /**
          * Hides color picker.
@@ -528,10 +661,29 @@
                 _color = new SmallColorPicker.Color(color);
             if (colorOld !== undefined)
                 _colorOld = colorOld === null ? null : new SmallColorPicker.Color(colorOld);
-            if (_dom && _dom.el && _dom.el.is(":visible")) {
+            if (this.isVisible()) {
                 this.show();
             }
         };
+
+        /**
+         * Gets or sets color picker parent.
+         * @param {HTMLElement|jQuery|string} [parent] - New parent (element or jQuery selector)
+         * @returns {jQuery} - Parent element
+         * @throws {string} Will throw an error if the picker is not in popup mode;
+         */
+        this.parent = function(parent) {
+            if (parent) {
+                if (this.isVisible()) {
+                    this.hide();
+                    _parent = $(parent);
+                    this.show();
+                } else {
+                    _parent = $(parent);
+                }
+            }
+            return _parent;
+        }
     };
 
 })(window.jQuery, document, window);

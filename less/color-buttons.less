@@ -1,3 +1,5 @@
+// @license SmallColorPicker | (c) 2013 Antelle | public domain license | http://creativecommons.org/choose/zero/
+
 @height: 15px;
 @shadow: -1px 2px 3px rgba(0, 0, 0, 0.1);
 @border-radius: 2px;
@@ -73,6 +75,9 @@
     vertical-align: top;
     margin: -1px 3px 0 0;
   }
+  &.color-btn-fixed {
+    width: 69px;
+  }
 }
 
 .color-btn-vertical {
@@ -84,6 +89,9 @@
     display: inline-block;
     vertical-align: top;
     margin: -1px 3px 0 0;
+  }
+  &.color-btn-fixed {
+    width: 57px;
   }
 }
 
@@ -97,6 +105,9 @@
     vertical-align: top;
     margin: 5px 3px 0 0;
   }
+  &.color-btn-fixed {
+    width: 59px;
+  }
 }
 
 .color-btn-horizontal {
@@ -109,6 +120,10 @@
     height: 3px;
     display: block;
     margin-bottom: -3px;
+    overflow: hidden;
+  }
+  &.color-btn-fixed {
+    width: 52px;
   }
 }
 
@@ -138,6 +153,9 @@
   &:active b {
     .shadow(0 8px 7px -5px rgba(0, 0, 0, 0.1) inset)
   }
+  &.color-btn-fixed {
+    width: 50px;
+  }
 }
 
 .color-btn-right {
@@ -165,5 +183,8 @@
   }
   &:active b {
     .shadow(0 8px 7px -5px rgba(0, 0, 0, 0.1) inset)
+  }
+  &.color-btn-fixed {
+    width: 50px;
   }
 }

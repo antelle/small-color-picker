@@ -1,5 +1,5 @@
 ﻿/**
- * @license SmallColorPicker v1.0.0 | (c) 2013 Antelle | https://github.com/antelle/small-color-picker/blob/master/MIT-LICENSE.txt
+ * @license SmallColorPicker | (c) 2013 Antelle | https://github.com/antelle/small-color-picker/blob/master/MIT-LICENSE.txt
  */
 
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -41,6 +41,9 @@
                 this.val = parseInt(val.substr(1), 16);
             } else {
                 var match = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)/g.exec(val);
+                if (!match) {
+                    throw "Invalid color: " + val;
+                }
                 this.setRgb(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
             }
         }
