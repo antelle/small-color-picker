@@ -5,6 +5,7 @@ $(function() {
     });
 
     try {
+        $("#color-selector-box").html("");
         var colorPicker = window.colorPicker = new SmallColorPicker.CirclePicker({
             placement: {
                 position: "static",
@@ -19,7 +20,7 @@ $(function() {
             },
             events: {
                 ok: function(color) {
-                    showColorPickerText("Selected color: " + color);
+                    showColorPickerText("Selected: " + color);
                 },
                 cancel: function(color) {
                     showColorPickerText("Cancelled");
@@ -33,7 +34,7 @@ $(function() {
             .html("Error loading SmallColorPicker (" + err + ")");
     }
 
-    $(".color-btn").click(function() {
+    $(".color-btn:not(#btn-picker)").click(function() {
         var cls = this.className.replace("color-btn ", "");
         var color = new SmallColorPicker.Color($("b", this).css("background-color")).toHex();
         $("#span-code-style span").html(cls);
@@ -41,9 +42,36 @@ $(function() {
         colorPicker.setColors(color);
     });
 
-    $("#link-toggle-source").click(function(e) {
+    $("#btn-picker").click(function() {
+        var el = $(this);
+        var bgEl = $("b", this);
+        var color = new SmallColorPicker.Color(bgEl.css("background-color")).toHex();
+        var picker = window.picker;
+        if (!picker) {
+            picker = window.picker = new SmallColorPicker.CirclePicker({
+                placement: {
+                    parent: this,
+                    popup: true
+                },
+                events: {
+                    ok: function(resultColor) {
+                        bgEl.css("background-color", resultColor);
+                        el.contents().last().remove();
+                        el.append(resultColor);
+                    }
+                }
+            });
+        } else if (picker.isVisible()) {
+            picker.hide();
+            return;
+        }
+        picker.setColors(color, color);
+        picker.show();
+    });
+
+    $(".link-toggle-source").click(function(e) {
         e.preventDefault();
-        $("#pre-init-src").toggle();
+        $("#" + $(this).data("src-id")).toggle();
         $(this).text($("#pre-init-src").is(":visible") ? "collapse example" : "expand example");
     });
 

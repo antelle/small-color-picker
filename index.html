@@ -9,14 +9,22 @@
     <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap-responsive.min.css"/>
     <link rel="stylesheet" type="text/css" href="lib/prettify/prettify.css"/>
     <link rel="stylesheet" type="text/css" href="css/site.css"/>
-    <link rel="stylesheet" type="text/css" href="scp/css/small-color-picker.css"/>
-    <link rel="stylesheet" type="text/css" href="scp/css/color-buttons.css"/>
+    <link rel="stylesheet" type="text/css" href="scp/css/small-color-picker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="scp/css/color-buttons.min.css"/>
+    <!--[if lt IE 9]>
+    <script src="lib/jquery/jquery-1.9.1.min.js"></script>
+    <![endif]-->
+    <!--[if gte IE 9]><!-->
     <script src="lib/jquery/jquery-2.0.0.min.js"></script>
+    <!--<![endif]-->
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="lib/prettify/prettify.js"></script>
     <script src="lib/prettify/lang-css.js"></script>
     <script src="scp/js/small-color-picker.min.js"></script>
     <script src="js/home.js"></script>
+    <!--[if lte IE 7]>
+    <style>.color-btn{display:block !important;float:left;}</style>
+    <![endif]-->
 </head>
 <body>
     <div id="wrap">
@@ -39,15 +47,16 @@
                 </div>
             </div>
             <div class="row">
-                <div class="span2">
+                <div class="span2" style="min-width: 110px;">
                     <h4>Color picker</h4>
                     <p>Here's it:</p>
-                    <div id="color-selector-box"></div>
+                    <div id="color-selector-box">loading...</div>
                     <div id="color-selector-text" class="spaced-top-small"></div>
                 </div>
                 <div class="span10">
                     <h4>Buttons</h4>
-                    <p>Buttons are in separate CSS file, <a href="https://raw.github.com/antelle/small-color-picker/build-v1/css/color-buttons.css">color-buttons.css</a>; this CSS has no dependencies and can be used standalone.</p>
+                    <p>Buttons are in separate CSS file, <a href="https://raw.github.com/antelle/small-color-picker/build-v1/css/color-buttons-min.css">color-buttons.css</a> (or <a href="https://github.com/antelle/small-color-picker/blob/master/less/color-buttons.less">LESS</a> version);
+                        this CSS has no dependencies and can be used standalone.</p>
                     <div class="row" id="buttons">
                         <div class="span5">
                             <div>
@@ -90,9 +99,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="spaced-top-small">
+                </div>
+            </div>
+            <div class="row">
+                <div class="span2">
+                    <div>Click this button to select color in popup:</div>
+                </div>
+                <div class="span10">
+                    <div>
                         Use this snippet to create buttons:
-                        <pre class="prettyprint lang-html">&lt;div class="color-btn <span class="custom" title="button color sample style" id="span-code-style">color-btn-left</span>"&gt;&lt;b style="background-color: <span class="custom" title="button color sample background color" id="span-code-color">#ff66bd</span>;"&gt;&lt;/b&gt;<span class="custom" title="button text" id="span-code-text">text</span>&lt;/div&gt;</pre>
+                        <pre class="prettyprint lang-html pre-small-margin" id="pre-btn-code"">&lt;div class="color-btn <span class="custom" title="button color sample style" id="span-code-style">color-btn-left</span>"&gt;&lt;b style="background-color: <span class="custom" title="button color sample background color" id="span-code-color">#ff66bd</span>;"&gt;&lt;/b&gt;<span class="custom" title="button text" id="span-code-text">text</span>&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span2">
+                    <div class="color-btn color-btn-fixed color-btn-vertical" id="btn-picker"><b style="background-color: #6d1f7a;"></b>#6d1f7a</div>
+                </div>
+                <div class="span10">
+                    <div id="block-btn-fixed-description">
+                        <span id="btn-left-arrow">&larr;</span>
+                        This button has fixed width: add a special class <code>color-btn-fixed</code> if you don't want a button to change its size by content.
+                        Fixed-size buttons are designed to match colors in hex-triplet web color format (e.g. <code>#6d1f7a</code>).
+                        <div><a class="link-toggle-source on-page-link" data-src-id="pre-fixed-btn-code" href="#">expand example</a></div>
+                        <pre class="prettyprint lang-html pre-small-margin" id="pre-fixed-btn-code" style="display: none;">&lt;div class="color-btn <span title="note this">color-btn-fixed</span> <span class="custom" title="button color sample style">color-btn-vertical</span>"&gt;&lt;b style="background-color: <span class="custom" title="button color sample background color">#6d1f7a</span>;"&gt;&lt;/b&gt;<span class="custom" title="button text">#6d1f7a</span>&lt;/div&gt;</pre>
                     </div>
                 </div>
             </div>
@@ -100,8 +130,8 @@
                 <div class="span12">
                     <h4>Installation</h4>
                     <p>Download the library, include CSS and JS files and write some initialization code (refer to <code>SmallColorPicker.defaults</code> in the <a href="https://github.com/antelle/small-color-picker/blob/master/js/circle-picker.js">source code</a> for available options).</p>
-                    <p><a id="link-toggle-source" href="#" class="on-page-link">expand example</a></p>
-                    <pre style="display: none;" id="pre-init-src" class="prettyprint lang-js">var colorPicker = window.colorPicker = new SmallColorPicker.CirclePicker({
+                    <p><a class="link-toggle-source on-page-link" data-src-id="pre-init-src" href="#">expand example</a></p>
+                    <pre style="display: none;" id="pre-init-src" class="prettyprint lang-js">var colorPicker = new SmallColorPicker.CirclePicker({
     placement: {
         position: "static",
         parent: $("#color-selector-box")
@@ -123,12 +153,13 @@
     }
 });
 colorPicker.show();</pre>
+                    <p>This color picker can also be used in popup, like this</p>
                 </div>
             </div>
             <div class="row">
                 <div class="span12">
                     <h4>Browsers suport</h4>
-                    <p>SmallColorPicker makes use of CSS3 features. Supported browsers are Chrome, Safari, Firefox, Opera, IE&#8805;9.</p>
+                    <p>SmallColorPicker makes use of CSS3 features. Supported browsers are Chrome, Safari, Firefox, Opera, IE&#8805;9. Buttons can be used in all browsers.</p>
                 </div>
             </div>
             <div class="row">

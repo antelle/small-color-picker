@@ -35,6 +35,23 @@ body {
 #buttons>div>div:not(:first-child) {
     margin-top: 10px;
 }
+#color-selector-text {
+    height: 20px;
+}
+pre.pre-small-margin {
+    margin-bottom: 2px;
+}
+#block-btn-fixed-description {
+    padding-top: 7px;
+    position: relative;
+}
+#block-btn-fixed-description #btn-left-arrow {
+    position: absolute;
+    left: -25px;
+    top: 5px;
+    font-size: 18px;
+    color: #999;
+}
 pre .custom {
     text-decoration: underline;
     color: #d14;
