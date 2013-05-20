@@ -47,6 +47,7 @@
             cancel: "Cancel"
         },
         behavior: {
+            rotate: true,
             hideOnSelect: true
         },
         events: {
@@ -66,6 +67,7 @@
         var _colorOld = new SmallColorPicker.Color(_opts.colors.colorOld);
         var _dom;
         var _domProps;
+        var _canvas;
         var _parent = _opts.placement.parent ? $(_opts.placement.parent) : null;
         var _squareRotation = 0;
         var _transforms = {};
@@ -89,9 +91,14 @@
          */
         function detectBrowserFeatures() {
             _browserFeatures = {
+                // Safari has a bug: elements positioned above the canvas are not redrawn without forcing them to do it
+                // Disable this in other browsers for speed acceleration
                 redrawBug: navigator.userAgent.indexOf("Safari") != -1,
+                // Firefox cannot rotate canvas directly: it renders jagged edges in (because of empty subpixels outside?)
+                // Other browsers antialias edges and perform canvas rotation faster than converting to dataimg and transforming it
+                directCanvasRotate: navigator.userAgent.indexOf("Firefox") == -1,
                 borderRadius: "borderRadius" in document.body.style
-            }
+            };
         }
 
         /**
@@ -233,13 +240,12 @@
             _dom.circleMark = $("<div></div>")
                 .appendTo(_dom.circle)
                 .addClass("s-c-p-circle-mark");
-            _dom.square = $("<canvas></canvas>")
+            _dom.square = $(_browserFeatures.directCanvasRotate ? "<canvas></canvas>" : "<img></img>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-square");
             _dom.squareMark = $("<div></div>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-square-mark");
-            _dom.square.attr({ width: _dom.square.width(), height: _dom.square.height() });
             _dom.colorOld = $("<div></div>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-color s-c-p-color-old");
@@ -254,6 +260,12 @@
                 .appendTo(_dom.el)
                 .addClass("s-c-p-sample s-c-p-sample-new")
                 .text(_opts.texts.ok);
+            if (_browserFeatures.directCanvasRotate) {
+                _canvas = _dom.square[0];
+            } else {
+                _canvas = $("<canvas></canvas>").appendTo(_dom.el).hide()[0];
+            }
+            $(_canvas).attr({ width: _dom.square.width(), height: _dom.square.height() });
         }
 
         /**
@@ -383,9 +395,10 @@
                 var radius = _domProps.circleWidth/2;
                 var squareSize = _domProps.squareWidth/2;
 
-                _transforms.fw = new SmallColorPicker.Transforms.Translate2D(-offs.left - radius, -offs.top - radius)
-                    .chain(new SmallColorPicker.Transforms.Rotate2D(-_squareRotation))
-                    .chain(new SmallColorPicker.Transforms.Translate2D(squareSize, squareSize));
+                _transforms.fw = new SmallColorPicker.Transforms.Translate2D(-offs.left - radius, -offs.top - radius);
+                if (_opts.behavior.rotate)
+                    _transforms.fw.chain(new SmallColorPicker.Transforms.Rotate2D(-_squareRotation));
+                _transforms.fw.chain(new SmallColorPicker.Transforms.Translate2D(squareSize, squareSize));
             }
             var transformed = _transforms.fw.apply([x, y]);
 
@@ -425,8 +438,7 @@
          * @returns {SmallColorPicker.Color} - Color with calculated saturation and value.
          */
         function getColorBySquareCoords(x, y) {
-            var canvas = _dom.square[0];
-            var ctx = canvas.getContext("2d");
+            var ctx = _canvas.getContext("2d");
             var pix = ctx.getImageData(x, y, 1, 1).data;
             return new SmallColorPicker.Color().setRgb(pix[0], pix[1], pix[2]);
         }
@@ -480,9 +492,8 @@
             var col = new SmallColorPicker.Color(baseColor);
             var hue = col.hue();
 
-            var canvas = _dom.square[0];
-            var size = canvas.width;
-            var ctx = canvas.getContext("2d");
+            var size = _canvas.width;
+            var ctx = _canvas.getContext("2d");
             ctx.clearRect(0, 0, size, size);
             
             var imageData = ctx.createImageData(size, size);
@@ -498,6 +509,10 @@
                 }
             }
             ctx.putImageData(imageData, 0, 0);
+            if (!_browserFeatures.directCanvasRotate) {
+                var img = _canvas.toDataURL();
+                _dom.square[0].src = img;
+            }
         }
 
         /**
@@ -517,7 +532,8 @@
             _dom.circleMark.css(attr);
             _squareRotation = angle - Math.PI/4;
             _transforms = {};
-            _dom.square.css({ transform: "rotate(" + _squareRotation + "rad)" });
+            if (_opts.behavior.rotate)
+                _dom.square.css({ transform: "rotate(" + _squareRotation + "rad)" });
         }
 
         /**
@@ -549,9 +565,10 @@
                 var squareSize = _domProps.squareWidth/2;
                 var elSize = _domProps.elWidth/2;
 
-                _transforms.rev = new SmallColorPicker.Transforms.Translate2D(-squareSize, -squareSize)
-                    .chain(new SmallColorPicker.Transforms.Rotate2D(_squareRotation))
-                    .chain(new SmallColorPicker.Transforms.Translate2D(elSize - 3, elSize - 3));
+                _transforms.rev = new SmallColorPicker.Transforms.Translate2D(-squareSize, -squareSize);
+                if (_opts.behavior.rotate)
+                    _transforms.rev.chain(new SmallColorPicker.Transforms.Rotate2D(_squareRotation));
+                _transforms.rev.chain(new SmallColorPicker.Transforms.Translate2D(elSize - 3, elSize - 3));
             }
 
             var transformed = _transforms.rev.apply([x, y]);
