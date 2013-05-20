@@ -61,7 +61,7 @@ a.on-page-link, a.on-page-link:hover, a.on-page-link:active {
     text-decoration: none;
     border-bottom: 1px dotted;
     display: inline-block;
-    line-height: 12px;
+    line-height: 13px;
 }
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
