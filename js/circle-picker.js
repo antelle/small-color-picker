@@ -94,7 +94,7 @@
                 // Safari has a bug: elements positioned above the canvas are not redrawn without forcing them to do it
                 // Disable this in other browsers for speed acceleration
                 redrawBug: navigator.userAgent.indexOf("Safari") != -1,
-                // Firefox cannot rotate canvas directly: it renders jagged edges in (because of empty subpixels outside?)
+                // Firefox cannot rotate canvas directly: it renders jagged edges (because of empty subpixels outside?)
                 // Other browsers antialias edges and perform canvas rotation faster than converting to dataimg and transforming it
                 directCanvasRotate: navigator.userAgent.indexOf("Firefox") == -1,
                 borderRadius: "borderRadius" in document.body.style
@@ -102,7 +102,7 @@
         }
 
         /**
-         * Asserts we can use color picker
+         * Asserts we can use color picker.
          * @throws {string} Will throw an error if the browser is not supported
          */
         function assertBrowserIsSupported() {

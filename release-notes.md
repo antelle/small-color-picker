@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.0.2 (2013-05-20)
+iOS Safari bugfix  
+`-` fixed jagged edges in iOS Safari  
+
 ##### v1.0.1 (2013-05-20)
 New features and bugfixes  
 `+` square rotation is now optional: `behavior.rotate`  
