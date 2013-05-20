@@ -240,7 +240,7 @@
             _dom.circleMark = $("<div></div>")
                 .appendTo(_dom.circle)
                 .addClass("s-c-p-circle-mark");
-            _dom.square = $(_browserFeatures.directCanvasRotate ? "<canvas></canvas>" : "<img></img>")
+            _dom.square = $(_browserFeatures.directCanvasRotate ? "<canvas></canvas>" : "<img/>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-square");
             _dom.squareMark = $("<div></div>")
@@ -510,8 +510,7 @@
             }
             ctx.putImageData(imageData, 0, 0);
             if (!_browserFeatures.directCanvasRotate) {
-                var img = _canvas.toDataURL();
-                _dom.square[0].src = img;
+                _dom.square[0].src = _canvas.toDataURL();
             }
         }
 
