@@ -2,6 +2,7 @@ Release notes
 -------------
 ##### v1.1.0 (2013-05-25)
 Numeric color enter mode; new features and bugfixes  
+`+` numeric color selection mode: `behavior.mode`, `behavior.switchMode`  
 `-` fixed buttons width  
 
 ##### v1.0.2 (2013-05-20)

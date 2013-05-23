@@ -38,9 +38,14 @@
             this.val = val;
         } else if (typeof val == "string") {
             if (val.charAt(0) === "#") {
-                this.val = parseInt(val.substr(1), 16);
+                if (/^#[\da-f]{6}$/gi.test(val))
+                    this.val = parseInt(val.substr(1), 16);
+                else if (/^#[\da-f]{3}$/gi.test(val))
+                    this.val = parseInt(val.charAt(1) + val.charAt(1) + val.charAt(2) + val.charAt(2) + val.charAt(3) + val.charAt(3), 16);
+                else
+                    throw "Invalid color: " + val;
             } else {
-                var match = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)/g.exec(val);
+                var match = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*([\d\.]+))?\)$/g.exec(val);
                 if (!match) {
                     throw "Invalid color: " + val;
                 }

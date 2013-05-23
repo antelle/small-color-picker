@@ -15,17 +15,36 @@ test("Constructor with hex string", function() {
     equal(color.val, 0x123456, "Value is parsed");
 });
 
+test("Constructor with short hex string", function() {
+    var color = new SmallColorPicker.Color("#123");
+    equal(color.val, 0x112233, "Value is parsed");
+});
+
 test("Constructor rgb string", function() {
-    var color = new SmallColorPicker.Color("rgb(1, 2, 3);");
+    var color = new SmallColorPicker.Color("rgb(1, 2, 3)");
+    equal(color.val, 0x010203, "Value is parsed");
+});
+
+test("Constructor rgba string", function() {
+    var color = new SmallColorPicker.Color("rgba(1, 2, 3, 0.4)");
     equal(color.val, 0x010203, "Value is parsed");
 });
 
 test("Constructor invalid string", function() {
     expect(1);
     try {
-        var color = new SmallColorPicker.Color("rgb(,,);");
+        var color = new SmallColorPicker.Color("rgb(,,)");
     } catch (err) {
-        equal(err, "Invalid color: rgb(,,);", "Error is thrown");
+        equal(err, "Invalid color: rgb(,,)", "Error is thrown");
+    }
+});
+
+test("Constructor invalid hex string", function() {
+    expect(1);
+    try {
+        var color = new SmallColorPicker.Color("#22");
+    } catch (err) {
+        equal(err, "Invalid color: #22", "Error is thrown");
     }
 });
 

@@ -28,6 +28,18 @@
     window.SmallColorPicker = window.SmallColorPicker || {};
 
     /**
+     * Enum for color picker mode.
+     * @readonly
+     * @enum {number}
+     */
+    SmallColorPicker.Mode = {
+        /** Graphical color selection */
+        COLOR: 1,
+        /** Text color selection/view */
+        NUMBER: 2
+    };
+
+    /**
      * ColorPicker default options.
      */
     SmallColorPicker.defaults = {
@@ -44,11 +56,15 @@
         },
         texts: {
             ok: "OK",
-            cancel: "Cancel"
+            cancel: "Cancel",
+            switchModeToNum: "Show numbers",
+            switchModeToCol: "Show color wheel"
         },
         behavior: {
             rotate: true,
-            hideOnSelect: true
+            hideOnSelect: true,
+            mode: SmallColorPicker.Mode.COLOR,
+            switchMode: true
         },
         events: {
             ok: null,
@@ -69,6 +85,8 @@
         var _domProps;
         var _canvas;
         var _parent = _opts.placement.parent ? $(_opts.placement.parent) : null;
+        var _mode = _opts.behavior.mode;
+        var _id = ~~(Math.random() * 10000);
         var _squareRotation = 0;
         var _transforms = {};
         var _lastUserSquareX, _lastUserSquareY;
@@ -210,7 +228,21 @@
          */
         function createElements() {
             _dom = {};
-            _dom.el = 
+            createElementsForSelf();
+            if (_opts.placement.popup) {
+                createElementsForPopup();
+            }
+            createElementsForColorWheel();
+            createElementsForNumbersMode();
+            createElementsForSamples();
+            createElementsForControls();
+        }
+
+        /**
+         * Creates main element.
+         */
+        function createElementsForSelf() {
+            _dom.el =
                 $("<div></div>")
                     .appendTo(_opts.placement.popup || !_parent ? document.body : _parent)
                     .addClass("s-c-p")
@@ -221,20 +253,30 @@
                     });
             if (_dom.el.css("position") == "static")
                 _dom.el.css("position", "relative");
-            if (_opts.placement.popup) {
-                _dom.el.css("position", "absolute");
-                _dom.el.addClass("s-c-p-popup");
-                _dom.arrow = $("<div></div>")
-                    .appendTo(_dom.el)
-                    .addClass("s-c-p-arrow");
-                _dom.arrowInner = $("<div></div>")
-                    .appendTo(_dom.arrow)
-                    .addClass("s-c-p-arrow-inner");
-            }
+        }
+
+        /**
+         * Creates popup controls: arrows and container.
+         */
+        function createElementsForPopup() {
+            _dom.el.css("position", "absolute");
+            _dom.el.addClass("s-c-p-popup");
+            _dom.arrow = $("<div></div>")
+                .appendTo(_dom.el)
+                .addClass("s-c-p-arrow");
+            _dom.arrowInner = $("<div></div>")
+                .appendTo(_dom.arrow)
+                .addClass("s-c-p-arrow-inner");
+        }
+
+        /**
+         * Creates controls for color wheel mode.
+         */
+        function createElementsForColorWheel() {
             _dom.circle = $("<div></div>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-circle");
-            _dom.innerCircle = $("<div></div>")
+            $("<div></div>")
                 .appendTo(_dom.circle)
                 .addClass("s-c-p-circle-inner");
             _dom.circleMark = $("<div></div>")
@@ -246,6 +288,53 @@
             _dom.squareMark = $("<div></div>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-square-mark");
+            if (_browserFeatures.directCanvasRotate) {
+                _canvas = _dom.square[0];
+            } else {
+                _canvas = $("<canvas></canvas>").appendTo(_dom.el).hide()[0];
+            }
+            var canvasSize = Math.min(_dom.square.width(), 100);
+            $(_canvas).attr({ width: canvasSize, height: canvasSize });
+        }
+
+        /**
+         * Creates controls for number mode.
+         */
+        function createElementsForNumbersMode() {
+            var textsEl = $("<div></div>")
+                .appendTo(_dom.el)
+                .addClass("s-c-p-color-texts");
+            $.each({ rgb: ["r", "g", "b"], hsv: ["h", "s", "b"] }, function(prop, colors) {
+                var columnEl = $("<div></div>")
+                    .appendTo(textsEl)
+                    .addClass("s-c-p-column");
+                $.each(colors, function(j, col) {
+                    var div = $("<div></div>")
+                        .appendTo(columnEl)
+                        .addClass("s-c-p-row");
+                    $("<label></label>")
+                        .appendTo(div)
+                        .attr("for", "s-c-p-txt-" + _id + "-" + prop + "-" + col)
+                        .text(col.toUpperCase() + ":");
+                    var max = prop == "rgb" ? 255 : col == "h" ? 360 : 100;
+                    $("<input/>")
+                        .attr({ id: "s-c-p-txt-" + _id + "-" + prop + "-" + col, type: "text", maxLength: 3,
+                            "data-prop": prop, "data-col": col, "data-min": 0, "data-max": max })
+                        .appendTo(div);
+                });
+            });
+            var div = $("<div></div>")
+                .appendTo(textsEl)
+                .addClass("s-c-p-row-full");
+            $("<input/>")
+                .attr({ id: "s-c-p-txt-" + _id + "-hex", type: "text", maxLength: 24 })
+                .appendTo(div);
+        }
+
+        /**
+         * Creates controls for color samples and captions.
+         */
+        function createElementsForSamples() {
             _dom.colorOld = $("<div></div>")
                 .appendTo(_dom.el)
                 .addClass("s-c-p-color s-c-p-color-old");
@@ -260,12 +349,17 @@
                 .appendTo(_dom.el)
                 .addClass("s-c-p-sample s-c-p-sample-new")
                 .text(_opts.texts.ok);
-            if (_browserFeatures.directCanvasRotate) {
-                _canvas = _dom.square[0];
-            } else {
-                _canvas = $("<canvas></canvas>").appendTo(_dom.el).hide()[0];
+        }
+
+        /**
+         * Creates controls mode switching.
+         */
+        function createElementsForControls() {
+            if (_opts.behavior.switchMode) {
+                _dom.modeSwitch = $("<div></div>")
+                    .appendTo(_dom.el)
+                    .addClass("s-c-p-mode-switch");
             }
-            $(_canvas).attr({ width: _dom.square.width(), height: _dom.square.height() });
         }
 
         /**
@@ -305,6 +399,41 @@
             if (_opts.placement.popup && _parent) {
                 $(window).resize(handleWindowResized);
             }
+            if (_dom.modeSwitch) {
+                _dom.modeSwitch.click(function() {
+                    switchMode();
+                });
+            }
+            $(".s-c-p-row input", _dom.el)
+                .focus(function() {
+                    $(this).data("oldval", +$(this).val());
+                })
+                .blur(function(e) {
+                    var val = $(this).val();
+                    var newVal = parseNumeric(val, +$(this).data("min"), +$(this).data("max"));
+                    if (val !== newVal.toString()) {
+                        $(this).val(isNaN(newVal) ? +$(this).data("oldval") : newVal);
+                        handleNumericInputKeyup(e, true);
+                    }
+                })
+                .keyup(function(e) {
+                    handleNumericInputKeyup(e, false);
+                });
+            $("#s-c-p-txt-" + _id + "-hex", _dom.el)
+                .focus(function() {
+                    $(this).data("oldval", $(this).val());
+                })
+                .blur(function(e) {
+                    var val = $(this).val();
+                    var newVal = parseColor(val);
+                    if (val !== newVal) {
+                        $(this).val(newVal || $(this).data("oldval"));
+                        handleHexInputKeyup(e, true);
+                    }
+                })
+                .keyup(function(e) {
+                    handleHexInputKeyup(e, false);
+                });
         }
 
         /**
@@ -366,6 +495,67 @@
             if (isVisible() && _opts.placement.popup && !_resizeTimeout) {
                 _resizeTimeout = setTimeout(setPosition, 100);
             }
+        }
+
+        /**
+         * Handles keyup in numeric text box (rgb, hsv). Updates other text boxes
+         * @param {object} e - Event
+         * @param {boolean} force - Force update fields, even if the value has not changed from old one
+         */
+        function handleNumericInputKeyup(e, force) {
+            var el = $(e.target);
+            var val = parseNumeric(el.val(), +el.data("min"), +el.data("max"));
+            if (isNaN(val)) {
+                val = el.data("oldval");
+            } else if (!force && val == el.data("oldval")) {
+                return;
+            }
+            var prop = el.data("prop");
+            var col = el.data("col");
+            var color = new SmallColorPicker.Color();
+            switch (prop) {
+                case "rgb":
+                    var rgb = readNumericRgb();
+                    rgb[col] = val;
+                    color.setRgb(rgb.r, rgb.g, rgb.b);
+                    break;
+                case "hsv":
+                    var hsv = readNumericHsv();
+                    hsv[col == "b" ? "v" : col] = val;
+                    color.setHsv(hsv.h, hsv.s, hsv.v);
+                    break;
+            }
+            if (_color.val == color.val)
+                return;
+            _color = color;
+            displayNumericHex();
+            if (prop == "rgb")
+                displayNumericHsv();
+            else
+                displayNumericRgb();
+            displayNewColorSample();
+        }
+
+        /**
+         * Handles keyup in hex text box. Updates numeric text boxes
+         * @param {object} e - Event
+         * @param {boolean} force - Force update fields, even if the value has not changed from old one
+         */
+        function handleHexInputKeyup(e, force) {
+            var el = $(e.target);
+            var val = parseColor(el.val());
+            if (!val) {
+                val = el.data("oldval");
+            } else if (!force && val == el.data("oldval")) {
+                return;
+            }
+            var color = new SmallColorPicker.Color(val);
+            if (_color.val == color.val)
+                return;
+            _color = color;
+            displayNumericHsv();
+            displayNumericRgb();
+            displayNewColorSample();
         }
 
         /**
@@ -455,7 +645,7 @@
          * Updates new color sample and description.
          */
         function displayNewColorSample() {
-            _dom.colorNew[0].innerHTML = _color.toHex();
+            _dom.colorNew[0].innerHTML = _color.toHex() + "<br/>"; // for better text selection, we'll add a line break
             setSampleColor(_dom.sampleNew, _color, "new");
         }
 
@@ -554,8 +744,8 @@
                 x += _lastUserSquareX;
                 y += _lastUserSquareY;
             } else {
-                x += ~~(hsv.s*width/100);
-                y += width - ~~(hsv.v*width/100);
+                x += hsv.s*width/100;
+                y += width - hsv.v*width/100;
                 x = Math.max(0, Math.min(width - 1, x));
                 y = Math.max(0, Math.min(width - 1, y));
             }
@@ -608,6 +798,52 @@
         }
 
         /**
+         * Parses dec or hex numeric value from string. If the value is not int, returns NaN.
+         * @param str - Input string
+         * @param min - Min value
+         * @param max - Max value
+         * @returns {number}
+         */
+        function parseNumeric(str, min, max) {
+            str = $.trim(str);
+            var result;
+            if (/^\d*$/g.test(str))
+                result = +str;
+            else if (/^[\da-f]+$/gi.test(str))
+                result = parseInt(str, 16);
+            else
+                return NaN;
+            return Math.max(min, Math.min(max, result));
+        }
+
+        /**
+         * Parses color (including named colors) from string.
+         * @param {string} str - String to parse in any format
+         * @returns {string} - Parsed color in hex format or null if there was an error
+         */
+        function parseColor(str) {
+            try {
+                return new SmallColorPicker.Color(str).toHex();
+            } catch (err) {
+                if (/^[a-z]+$/gi.test(str)) {
+                    str = str.toLowerCase();
+                    var el = $("<div></div>").css("color", str).appendTo("body");
+                    var color = el.css("color");
+                    el.remove();
+                    try {
+                        color = new SmallColorPicker.Color(color);
+                        if (color.val || str == "black")
+                            return color.toHex();
+                        return null;
+                    } catch (err2) {
+                        return null;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /**
          * Moves circle and square marks.
          */
         function moveMarks() {
@@ -616,11 +852,104 @@
         }
 
         /**
+         * Switches between color picker input modes.
+         */
+        function switchMode() {
+            _mode = _mode == SmallColorPicker.Mode.COLOR ? SmallColorPicker.Mode.NUMBER : SmallColorPicker.Mode.COLOR;
+            displayMode();
+        }
+
+        /**
+         * Displays controls for currently selected mode
+         */
+        function displayMode() {
+            if (_mode == SmallColorPicker.Mode.NUMBER) {
+                _dom.el.addClass("s-c-p-mode-num");
+                _dom.squareMark.hide();
+                if (_dom.modeSwitch)
+                    _dom.modeSwitch.attr("title", _opts.texts.switchModeToCol);
+                displayNumericRgb();
+                displayNumericHsv();
+                displayNumericHex();
+            } else {
+                _dom.el.removeClass("s-c-p-mode-num");
+                _dom.squareMark.show();
+                if (_dom.modeSwitch)
+                    _dom.modeSwitch.attr("title", _opts.texts.switchModeToNum);
+                displaySquareColor(_color.toHex());
+                moveMarks();
+            }
+        }
+
+        /**
+         * Fills RGB text boxes with values from _color.
+         */
+        function displayNumericRgb() {
+            $.each(_color.toRgb(), function(part, num) {
+                $("#s-c-p-txt-" + _id + "-rgb-" + part, _dom.el).val(num);
+            });
+        }
+
+        /**
+         * Reads values from RGB text boxes.
+         * @returns {{r: number, g: number, b: number}}
+         */
+        function readNumericRgb() {
+            var result = {};
+            $.each(["r", "g", "b"], function(ix, part) {
+                result[part] = ~~$("#s-c-p-txt-" + _id + "-rgb-" + part, _dom.el).val();
+            });
+            return result;
+        }
+
+        /**
+         * Fills HSV text boxes with values from _color.
+         */
+        function displayNumericHsv() {
+            $.each(_color.toHsv(), function(part, num) {
+                $("#s-c-p-txt-" + _id + "-hsv-" + (part === "v" ? "b" : part), _dom.el).val(Math.round(num));
+            });
+        }
+
+        /**
+         * Reads values from HSV text boxes.
+         * @returns {{h: number, s: number, v: number}}
+         */
+        function readNumericHsv() {
+            var result = {};
+            $.each(["h", "s", "v"], function(ix, part) {
+                result[part] = ~~$("#s-c-p-txt-" + _id + "-hsv-" + (part === "v" ? "b" : part), _dom.el).val();
+            });
+            return result;
+        }
+
+        /**
+         * Fills hex text box with values from _color.
+         */
+        function displayNumericHex() {
+            $("#s-c-p-txt-" + _id + "-hex", _dom.el).val(_color.toHex());
+        }
+
+        /**
          * Gets state of the control.
          * @returns {boolean}
          */
         function isVisible() {
             return _dom && _dom.el && _dom.el.is(":visible");
+        }
+
+        /**
+         * Shows color picker.
+         */
+        function show() {
+            if (!_dom) {
+                initialize();
+            }
+            displayOldColorSample();
+            displayNewColorSample();
+            setPosition();
+            displayMode();
+            _dom.el.show();
         }
 
         /**
@@ -641,31 +970,25 @@
         };
 
         /**
-         * Shows color picker.
-         */
-        this.show = function() {
-            if (!_dom) {
-                initialize();
-            }
-            displaySquareColor(_color.toHex());
-            displayOldColorSample();
-            displayNewColorSample();
-            moveMarks();
-            _dom.el.show();
-            setPosition();
-            getStyleProps();
-        };
-
-        /**
          * Gets state of the control.
          * @returns {boolean}
          */
         this.isVisible = isVisible;
 
         /**
+         * Shows color picker.
+         */
+        this.show = show;
+
+        /**
          * Hides color picker.
          */
         this.hide = hide;
+
+        /**
+         * Switches between color picker input modes.
+         */
+        this.switchMode = switchMode;
 
         /**
          * Sets old and new colors.
