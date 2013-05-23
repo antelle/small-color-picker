@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.1.1 (2013-05-23)
+Touch events support  
+`+` added support for touch events  
+
 ##### v1.1.0 (2013-05-23)
 Numeric color enter mode; new features and bugfixes  
 `+` numeric color selection mode: `behavior.mode`, `behavior.switchMode`  

@@ -116,7 +116,8 @@
                 // Firefox cannot rotate canvas directly: it renders jagged edges (because of empty subpixels outside?)
                 // Other browsers antialias edges and perform canvas rotation faster than converting to dataimg and transforming it
                 directCanvasRotate: navigator.userAgent.indexOf("Firefox") == -1,
-                borderRadius: "borderRadius" in document.body.style
+                borderRadius: "borderRadius" in document.body.style,
+                touch: "ontouchstart" in document
             };
         }
 
@@ -379,10 +380,11 @@
          * Binds events to DOM elements.
          */
         function bindEvents() {
-            _dom.circle.on("mousedown", handleCircleMouseDown);
+            _dom.circle.on(_browserFeatures.touch ? "touchstart" : "mousedown", handleCircleMouseDown);
             _dom.square
-                .on("mousedown", handleSquareMouseDown)
-                .on("selectstart", function(e) { e.preventDefault(); });
+                .on("selectstart", function(e) { e.preventDefault(); })
+                .on(_browserFeatures.touch ? "touchstart" : "mousedown", handleSquareMouseDown);
+
             _dom.sampleNew.click(function() {
                 if (_opts.behavior.hideOnSelect) {
                     hide();
@@ -443,11 +445,11 @@
          */
         function handleCircleMouseDown(e) {
             e.preventDefault();
-            processCircleColorChangeEvent(e.pageX, e.pageY);
+            processCircleColorChangeEvent(getX(e), getY(e));
             toggleGlobalSelection(false);
             $(document)
-                .on("mousemove", handleDocumentMouseMoveForCircle)
-                .one("mouseup", handleDocumentMouseUp);
+                .on(_browserFeatures.touch ? "touchmove" : "mousemove", handleDocumentMouseMoveForCircle)
+                .one(_browserFeatures.touch ? "touchend" : "mouseup", handleDocumentMouseUp);
         }
 
         /**
@@ -456,11 +458,11 @@
          */
         function handleSquareMouseDown(e) {
             e.preventDefault();
-            processSquareColorChangeEvent(e.pageX, e.pageY);
+            processSquareColorChangeEvent(getX(e), getY(e));
             toggleGlobalSelection(false);
             $(document)
-                .on("mousemove", handleDocumentMouseMoveForSquare)
-                .one("mouseup", handleDocumentMouseUp);
+                .on(_browserFeatures.touch ? "touchmove" : "mousemove", handleDocumentMouseMoveForSquare)
+                .one(_browserFeatures.touch ? "touchend" : "mouseup", handleDocumentMouseUp);
         }
 
         /**
@@ -468,7 +470,8 @@
          * @param e
          */
         function handleDocumentMouseMoveForCircle(e) {
-            processCircleColorChangeEvent(e.pageX, e.pageY);
+            e.preventDefault();
+            processCircleColorChangeEvent(getX(e), getY(e));
         }
 
         /**
@@ -476,7 +479,8 @@
          * @param e
          */
         function handleDocumentMouseMoveForSquare(e) {
-            processSquareColorChangeEvent(e.pageX, e.pageY);
+            e.preventDefault();
+            processSquareColorChangeEvent(getX(e), getY(e));
         }
 
         /**
@@ -485,8 +489,8 @@
         function handleDocumentMouseUp() {
             toggleGlobalSelection(true);
             $(document)
-                .off("mousemove", handleDocumentMouseMoveForCircle)
-                .off("mousemove", handleDocumentMouseMoveForSquare);
+                .off(_browserFeatures.touch ? "touchmove" : "mousemove", handleDocumentMouseMoveForCircle)
+                .off(_browserFeatures.touch ? "touchmove" : "mousemove", handleDocumentMouseMoveForSquare);
         }
 
         /**
@@ -782,6 +786,24 @@
             _dom.squareMark[0].style.borderColor = borderColor.toHex();
             // force redraw element in Safari
             forceRedrawElement(_dom.squareMark[0]);
+        }
+
+        /**
+         * Gets X from event.
+         * @param {jQuery.Event} e - Event
+         * @returns {number} - PageX
+         */
+        function getX(e) {
+            return e.pageX !== undefined ? e.pageX : e.originalEvent.pageX;
+        }
+
+        /**
+         * Gets Y from event.
+         * @param {jQuery.Event} e - Event
+         * @returns {number} - PageX
+         */
+        function getY(e) {
+            return e.pageY !== undefined ? e.pageY : e.originalEvent.pageY;
         }
 
         /**
