@@ -31,7 +31,7 @@ $(function() {
     } catch (err) {
         $("#color-selector-box")
             .addClass("text-error")
-            .html("Error loading SmallColorPicker (" + err + ")");
+            .html("Error loading SmallColorPicker (" + err + "). Click <a href='img/screenshot.png'>here</a> to see what does it look like.");
     }
 
     $(".color-btn:not(#btn-picker)").click(function() {
@@ -58,15 +58,21 @@ $(function() {
                         bgEl.css("background-color", resultColor);
                         el.contents().last().remove();
                         el.append(resultColor);
+                        $("#color-selector-box").fadeTo(300, 1);
+                    },
+                    cancel: function() {
+                        $("#color-selector-box").fadeTo(300, 1);
                     }
                 }
             });
         } else if (picker.isVisible()) {
             picker.hide();
+            $("#color-selector-box").fadeTo(300, 1);
             return;
         }
         picker.setColors(color, color);
         picker.show();
+        $("#color-selector-box").fadeTo(300, 0.03);
     });
 
     $(".link-toggle-source").click(function(e) {
