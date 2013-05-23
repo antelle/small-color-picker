@@ -64,7 +64,8 @@
             rotate: true,
             hideOnSelect: true,
             mode: SmallColorPicker.Mode.COLOR,
-            switchMode: true
+            switchMode: true,
+            animation: true
         },
         events: {
             ok: null,
@@ -940,8 +941,9 @@
 
         /**
          * Shows color picker.
+         * @param {boolean} [animate] - Apply fade; default from _opts if none
          */
-        function show() {
+        function show(animate) {
             if (!_dom) {
                 initialize();
             }
@@ -949,14 +951,25 @@
             displayNewColorSample();
             setPosition();
             displayMode();
-            _dom.el.show();
+            if (animate === undefined)
+                animate = _opts.behavior.animation;
+            if (animate)
+                _dom.el.fadeIn(200);
+            else
+                _dom.el.show();
         }
 
         /**
          * Hides color picker.
+         * @param {boolean} [animate] - Apply fade; default from _opts if none
          */
-        function hide() {
-            _dom.el.hide();
+        function hide(animate) {
+            if (animate === undefined)
+                animate = _opts.behavior.animation;
+            if (animate)
+                _dom.el.fadeOut(200);
+            else
+                _dom.el.show();
         }
 
         /**
@@ -1014,9 +1027,9 @@
         this.parent = function(parent) {
             if (parent) {
                 if (this.isVisible()) {
-                    this.hide();
+                    this.hide(false);
                     _parent = $(parent);
-                    this.show();
+                    this.show(false);
                 } else {
                     _parent = $(parent);
                 }
