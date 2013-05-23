@@ -318,7 +318,7 @@
                         .text(col.toUpperCase() + ":");
                     var max = prop == "rgb" ? 255 : col == "h" ? 360 : 100;
                     $("<input/>")
-                        .attr({ id: "s-c-p-txt-" + _id + "-" + prop + "-" + col, type: "text", maxLength: 3,
+                        .attr({ id: "s-c-p-txt-" + _id + "-" + prop + "-" + col, type: "text", maxLength: 3, autocomplete: "off",
                             "data-prop": prop, "data-col": col, "data-min": 0, "data-max": max })
                         .appendTo(div);
                 });
@@ -327,7 +327,7 @@
                 .appendTo(textsEl)
                 .addClass("s-c-p-row-full");
             $("<input/>")
-                .attr({ id: "s-c-p-txt-" + _id + "-hex", type: "text", maxLength: 24 })
+                .attr({ id: "s-c-p-txt-" + _id + "-hex", type: "text", maxLength: 24, autocomplete: "off" })
                 .appendTo(div);
         }
 
@@ -827,7 +827,7 @@
             } catch (err) {
                 if (/^[a-z]+$/gi.test(str)) {
                     str = str.toLowerCase();
-                    var el = $("<div></div>").css("color", str).appendTo("body");
+                    var el = $("<div style='color:black'></div>").css("color", str).appendTo("body");
                     var color = el.css("color");
                     el.remove();
                     try {
