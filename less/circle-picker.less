@@ -5,7 +5,7 @@
 @colorSampleLight: black;
 @colorSampleDark: white;
 @colorBorder: #ddd;
-@colorBorderText: #f3f3f3;
+@colorBorderText: rgba(0, 0, 0, 0.1);
 @colorBg: #fcfcfc;
 @colorBgText: #fefefe;
 @colorText: #333;
@@ -198,7 +198,7 @@
     .transition(opacity 200ms);
     &:hover, &:active {
       opacity: 1;
-      .transition(opacity 200ms);
+      .transition(opacity 150ms);
     }
   }
 
@@ -214,11 +214,24 @@
       display: none;
     }
     .s-c-p-color-texts {
+      .input() {
+        color: @colorText;
+        border: 1px solid @colorBorderText;
+        border-radius: 1px;
+        background-color: @colorBgText;
+        .transition(border-color 300ms);
+        &:focus {
+          border: 1px solid fadein(@colorBorderText, 20%);
+          .transition(border-color 300ms);
+          outline: none;
+        }
+      }
       @padding: 10px;
       color: @colorText;
       display: block;
       padding: 15px 0 0 0;
       font-size: 14px;
+      line-height: 14px;
       .s-c-p-column {
         display: inline-block;
         width: @totalWidth/2 - @padding;
@@ -226,40 +239,45 @@
           margin-left: 10px;
         }
         &:nth-child(2) {
-          margin-left: 6px;
+          margin-left: 4px;
         }
         .s-c-p-row {
           padding: 3px 0;
           label {
             display: inline-block;
             width: 18px;
+            height: 18px;
+            font-size: 14px;
+            line-height: 16px;
+            margin: 0;
+            padding: 0;
+            vertical-align: top;
           }
           input {
             display: inline-block;
             width: 25px;
             height: 14px;
-            color: @colorText;
+            font-size: 12px;
+            line-height: 16px;
             margin: 0;
-            border: 1px solid @colorBorderText;
-            border-radius: 1px;
-            background-color: @colorBgText;
+            padding: 1px 2px;
             box-shadow: 0 0 3px rgba(100, 100, 100, 0.05);
+            vertical-align: top;
+            .input();
           }
         }
       }
       .s-c-p-row-full {
         padding: 6px 0 0 0;
         input {
-          color: @colorText;
           font-size: 20px;
+          line-height: 20px;
           margin: 0 0 0 @padding;
           width: @totalWidth - @padding*2 - 6;
           text-align: center;
           padding: 1px;
-          border: 1px solid @colorBorderText;
-          border-radius: 1px;
-          background-color: @colorBgText;
           box-shadow: 0 0 5px rgba(100, 100, 100, 0.05);
+          .input();
         }
       }
     }
