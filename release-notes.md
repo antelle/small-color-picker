@@ -1,6 +1,6 @@
 Release notes
 -------------
-##### v1.1.0 (2013-05-25)
+##### v1.1.0 (2013-05-23)
 Numeric color enter mode; new features and bugfixes  
 `+` numeric color selection mode: `behavior.mode`, `behavior.switchMode`  
 `+` animations: `behavoir.animation`  
