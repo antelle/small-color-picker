@@ -3,6 +3,8 @@ server: http://localhost:9876
 load:
  - lib/qunit/equiv.js
  - lib/qunit/QUnitAdapter.js
+ - lib/jquery/jquery-2.0.0.min.js
+ - lib/less/less-1.3.3.min.js
  - js/*.js
 
 test:

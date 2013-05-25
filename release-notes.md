@@ -1,5 +1,9 @@
 Release notes
 -------------
+##### v1.2.0 (2013-05-25)
+jQuery plugin  
+`+` jQuery plugin `$(…).smallColorPicker`  
+
 ##### v1.1.1 (2013-05-23)
 Touch events support  
 `+` added support for touch events  

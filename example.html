@@ -9,9 +9,11 @@
     <script src="js/color.js"></script>
     <script src="js/transform2d.js"></script>
     <script src="js/circle-picker.js"></script>
+    <script src="js/circle-picker.jquery.js"></script>
     <style>
 body {
     font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #fafafa;
 }
 #buttons {
     margin-top: 10px;
@@ -19,10 +21,9 @@ body {
     </style>
     <script>
 $(function() {
-    var colorPicker = window.colorPicker = new SmallColorPicker.CirclePicker({
+    $("#color-selector-box").smallColorPicker({
         placement: {
             position: "static",
-            parent: $("#color-selector-box"),
             popup: false
         },
         colors: {
@@ -38,54 +39,12 @@ $(function() {
             }
         }
     });
-    $("#link-show").click(function(e) {
-        e.preventDefault();
-        colorPicker.toggle();
-    });
-    colorPicker.setColors("#6d1f7a", "#990e8d");
-    colorPicker.show();
-
-    $(".color-btn").click(function() {
-        if (window.popupPicker) {
-            if (popupPicker.parent()[0] === this && popupPicker.isVisible()) {
-                popupPicker.hide();
-            } else {
-                popupPicker.parent(this);
-                popupPicker.show();
-            }
-            return;
-        }
-        var el = $(this);
-        var bgEl = $("b", this);
-        var color = new SmallColorPicker.Color(bgEl.css("background-color")).toHex();
-        window.popupPicker = new SmallColorPicker.CirclePicker({
-            placement: {
-                parent: this,
-                popup: true,
-                left: "200px"
-            },
-            colors: {
-                colorOld: color,
-                colorNew: color
-            },
-            events: {
-                ok: function(resultColor) {
-                    bgEl.css("background-color", resultColor);
-                    if (el.text().charAt(0) == "#") {
-                        el.contents().last().remove();
-                        el.append(resultColor);
-                    }
-                }
-            }
-        });
-        popupPicker.show();
-        $(this).data("picker", popupPicker);
-    });
+    $(".color-btn").smallColorPicker({  });
 });
     </script>
 </head>
 <body>
-    <div>Click <a href="#" id="link-show">here</a> to select color.</div>
+    <div>Here's the color picker:</div>
     <div id="color-selector-box"></div>
     <div id="buttons">
         <div>

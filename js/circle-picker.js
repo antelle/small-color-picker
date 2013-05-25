@@ -27,6 +27,7 @@
 
     window.SmallColorPicker = window.SmallColorPicker || {};
 
+    //region Enums
     /**
      * Enum for color picker mode.
      * @readonly
@@ -38,7 +39,9 @@
         /** Text color selection/view */
         NUMBER: 2
     };
+    //endregion
 
+    //region Defaults
     /**
      * ColorPicker default options.
      */
@@ -48,7 +51,7 @@
             top: "0",
             left: "0",
             parent: null,
-            popup: false
+            popup: true
         },
         colors: {
             colorOld: null,
@@ -66,26 +69,26 @@
             mode: SmallColorPicker.Mode.COLOR,
             switchMode: true,
             animation: true
-        },
-        events: {
-            ok: null,
-            cancel: null
         }
     };
+    //endregion
 
     /**
      * Circle color picker.
      * @param opts - Options, see SmallColorPicker.defaults as example
      * @constructor
+     * @throws {string} Will throw error in case of browser is incompatible or there is an error in options
      */
     SmallColorPicker.CirclePicker = function(opts) {
+        //region private
+        var that = this;
         var _opts = $.extend(true, {}, SmallColorPicker.defaults, opts);
         var _color = new SmallColorPicker.Color(_opts.colors.colorNew);
         var _colorOld = new SmallColorPicker.Color(_opts.colors.colorOld);
         var _dom;
         var _domProps;
         var _canvas;
-        var _parent = _opts.placement.parent ? $(_opts.placement.parent) : null;
+        var _parent = _opts.placement.parent ? $(_opts.placement.parent) : $(document.body);
         var _mode = _opts.behavior.mode;
         var _id = ~~(Math.random() * 10000);
         var _squareRotation = 0;
@@ -93,11 +96,21 @@
         var _lastUserSquareX, _lastUserSquareY;
         var _browserFeatures;
         var _resizeTimeout;
+        //endregion
 
+        //region Constructor
+        initialize();
+        if (!_opts.placement.popup) {
+            show();
+        }
+        //endregion
+
+        //region Init/destroy
         /**
          * Initializes color picker before first control show.
          */
         function initialize() {
+            checkOptions();
             detectBrowserFeatures();
             assertBrowserIsSupported();
             createElements();
@@ -105,6 +118,28 @@
             getStyleProps();
         }
 
+        /**
+         * Checks initialization options.
+         * @throws {string} Will throw an error if there are any errors
+         */
+        function checkOptions() {
+            assertParentIsOneElement(_parent);
+        }
+
+        /**
+         * Destroys color picker
+         */
+        function destroy() {
+            removeElements();
+        }
+
+        /**
+         * Destroys color picker
+         */
+        this.destroy = destroy;
+        //endregion
+
+        //region Browser support
         /**
          * Detects browser features.
          */
@@ -130,100 +165,9 @@
                 throw "Browser is not supported";
             }
         }
+        //endregion
 
-        /**
-         * Sets correct element position if the picker is displayed in popup.
-         */
-        function setPosition() {
-            if (!_opts.placement.popup || !_parent)
-                return;
-            if (_resizeTimeout) {
-                clearTimeout(_resizeTimeout);
-                _resizeTimeout = null;
-            }
-            var parentPosition = _parent.position(), parentWidth = _parent.outerWidth(), parentHeight = _parent.outerHeight(),
-                windowHeight = $(window).outerHeight(), windowWidth = $(window).width(),
-                width = _dom.el.outerWidth(), height = _dom.el.outerHeight(),
-                paddingToPageBorder = 10, innerArrowPadding = 1, smallPadding = 1,
-                arrowSize = 15,
-                offset = {}, arrowOffset = {}, arrowInnerOffset = {};
-
-            var spaceAbove = parentPosition.top - $(window).scrollTop();
-            var spaceBelow = windowHeight - parentHeight - spaceAbove;
-            var spaceLeft = parentPosition.left - $(window).scrollLeft();
-            var spaceRight = windowWidth - parentWidth - spaceLeft;
-
-            if (Math.max(spaceAbove, spaceBelow) > height + paddingToPageBorder && Math.min(spaceLeft, spaceRight) > width/2 - parentWidth/2 + paddingToPageBorder) {
-                offset.left = parentPosition.left + parentWidth/2 - width/2;
-                arrowOffset.left = width/2 - arrowSize;
-                arrowInnerOffset.left = -arrowSize;
-                if (spaceAbove > spaceBelow) {
-                    offset.top = parentPosition.top - height - arrowSize + 3;
-                    arrowOffset.top = height - 2;
-                    arrowInnerOffset.top = -arrowSize - innerArrowPadding;
-                    setArrowBorders("top", arrowSize);
-                } else {
-                    offset.top = parentPosition.top + parentHeight + smallPadding + arrowSize;
-                    arrowOffset.top = -arrowSize;
-                    arrowInnerOffset.top = innerArrowPadding;
-                    setArrowBorders("bottom", arrowSize);
-                }
-            } else {
-                offset.top = parentPosition.top + parentHeight/2 - height/2;
-                arrowOffset.top = height/2 - arrowSize;
-                arrowInnerOffset.top = -arrowSize;
-                if (spaceLeft > spaceRight) {
-                    offset.left = parentPosition.left - width - arrowSize + 2;
-                    arrowOffset.left = width - 1;
-                    arrowInnerOffset.left = -arrowSize - innerArrowPadding;
-                    setArrowBorders("left", arrowSize);
-                } else {
-                    offset.left = parentPosition.left + parentWidth + smallPadding + arrowSize;
-                    arrowOffset.left = -arrowSize;
-                    arrowInnerOffset.left = innerArrowPadding;
-                    setArrowBorders("right", arrowSize);
-                }
-            }
-            _dom.el.css(offset);
-            _dom.arrow.css(arrowOffset);
-            _dom.arrowInner.css(arrowInnerOffset);
-        }
-
-        /**
-         * Turns arrow by adjusting border heights.
-         * @param {string} placement - Arrow placement
-         * @param {number} arrowSize - Arrow size
-         */
-        function setArrowBorders(placement, arrowSize) {
-            var color = _dom.arrow.css("color");
-            var innerColor = _dom.arrowInner.css("color");
-            var opposite;
-            switch (placement) {
-                case "top":
-                    opposite = "bottom";
-                    break;
-                case "bottom":
-                    opposite = "top";
-                    break;
-                case "left":
-                    opposite = "right";
-                    break;
-                case "right":
-                    opposite = "left";
-                    break;
-            }
-            $.each(["top", "right", "bottom", "left"], function(ix, pos) {
-                var prop = "border-" + pos;
-                var borderColor = pos == placement ? color : "transparent";
-                var border = pos == opposite ? "none" : arrowSize + "px solid " + borderColor;
-                _dom.arrow.css(prop, border);
-
-                borderColor = pos == placement ? innerColor : "transparent";
-                border = pos == opposite ? "none" : arrowSize + "px solid " + borderColor;
-                _dom.arrowInner.css(prop, border);
-            });
-        }
-
+        //region DOM elements
         /**
          * Created DOM elements.
          * Initializes _dom variable.
@@ -246,12 +190,13 @@
         function createElementsForSelf() {
             _dom.el =
                 $("<div></div>")
-                    .appendTo(_opts.placement.popup || !_parent ? document.body : _parent)
+                    .appendTo(_opts.placement.popup ? document.body : _parent)
                     .addClass("s-c-p")
                     .css({
                         position: _opts.placement.position,
                         left: _opts.placement.left,
-                        top: _opts.placement.top
+                        top: _opts.placement.top,
+                        display: "none"
                     });
             if (_dom.el.css("position") == "static")
                 _dom.el.css("position", "relative");
@@ -377,6 +322,111 @@
         }
 
         /**
+         * Removes DOM elements
+         */
+        function removeElements() {
+            if (_dom && _dom.el)
+                _dom.el.remove();
+        }
+        //endregion
+
+        //region Popup positioning
+        /**
+         * Sets correct element position if the picker is displayed in popup.
+         */
+        function setPosition() {
+            if (!_opts.placement.popup)
+                return;
+            if (_resizeTimeout) {
+                clearTimeout(_resizeTimeout);
+                _resizeTimeout = null;
+            }
+            var parentPosition = _parent.position(), parentWidth = _parent.outerWidth(), parentHeight = _parent.outerHeight(),
+                windowHeight = $(window).outerHeight(), windowWidth = $(window).width(),
+                width = _dom.el.outerWidth(), height = _dom.el.outerHeight(),
+                paddingToPageBorder = 10, innerArrowPadding = 1, smallPadding = 1,
+                arrowSize = 15,
+                offset = {}, arrowOffset = {}, arrowInnerOffset = {};
+
+            var spaceAbove = parentPosition.top - $(window).scrollTop();
+            var spaceBelow = windowHeight - parentHeight - spaceAbove;
+            var spaceLeft = parentPosition.left - $(window).scrollLeft();
+            var spaceRight = windowWidth - parentWidth - spaceLeft;
+
+            if (Math.max(spaceAbove, spaceBelow) > height + paddingToPageBorder && Math.min(spaceLeft, spaceRight) > width/2 - parentWidth/2 + paddingToPageBorder) {
+                offset.left = parentPosition.left + parentWidth/2 - width/2;
+                arrowOffset.left = width/2 - arrowSize;
+                arrowInnerOffset.left = -arrowSize;
+                if (spaceAbove > spaceBelow) {
+                    offset.top = parentPosition.top - height - arrowSize + 3;
+                    arrowOffset.top = height - 2;
+                    arrowInnerOffset.top = -arrowSize - innerArrowPadding;
+                    setArrowBorders("top", arrowSize);
+                } else {
+                    offset.top = parentPosition.top + parentHeight + smallPadding + arrowSize;
+                    arrowOffset.top = -arrowSize;
+                    arrowInnerOffset.top = innerArrowPadding;
+                    setArrowBorders("bottom", arrowSize);
+                }
+            } else {
+                offset.top = parentPosition.top + parentHeight/2 - height/2;
+                arrowOffset.top = height/2 - arrowSize;
+                arrowInnerOffset.top = -arrowSize;
+                if (spaceLeft > spaceRight) {
+                    offset.left = parentPosition.left - width - arrowSize + 2;
+                    arrowOffset.left = width - 1;
+                    arrowInnerOffset.left = -arrowSize - innerArrowPadding;
+                    setArrowBorders("left", arrowSize);
+                } else {
+                    offset.left = parentPosition.left + parentWidth + smallPadding + arrowSize;
+                    arrowOffset.left = -arrowSize;
+                    arrowInnerOffset.left = innerArrowPadding;
+                    setArrowBorders("right", arrowSize);
+                }
+            }
+            _dom.el.css(offset);
+            _dom.arrow.css(arrowOffset);
+            _dom.arrowInner.css(arrowInnerOffset);
+        }
+
+        /**
+         * Turns arrow by adjusting border heights.
+         * @param {string} placement - Arrow placement
+         * @param {number} arrowSize - Arrow size
+         */
+        function setArrowBorders(placement, arrowSize) {
+            var color = _dom.arrow.css("color");
+            var innerColor = _dom.arrowInner.css("color");
+            var opposite;
+            switch (placement) {
+                case "top":
+                    opposite = "bottom";
+                    break;
+                case "bottom":
+                    opposite = "top";
+                    break;
+                case "left":
+                    opposite = "right";
+                    break;
+                case "right":
+                    opposite = "left";
+                    break;
+            }
+            $.each(["top", "right", "bottom", "left"], function(ix, pos) {
+                var prop = "border-" + pos;
+                var borderColor = pos == placement ? color : "transparent";
+                var border = pos == opposite ? "none" : arrowSize + "px solid " + borderColor;
+                _dom.arrow.css(prop, border);
+
+                borderColor = pos == placement ? innerColor : "transparent";
+                border = pos == opposite ? "none" : arrowSize + "px solid " + borderColor;
+                _dom.arrowInner.css(prop, border);
+            });
+        }
+        //endregion
+
+        //region Events
+        /**
          * Binds events to DOM elements.
          */
         function bindEvents() {
@@ -390,16 +440,14 @@
                     hide();
                     _colorOld = _color;
                 }
-                if (_opts.events.ok)
-                    _opts.events.ok(_color.toHex());
+                _parent.trigger("scp_ok", [_color.toHex(), that]);
             });
             _dom.sampleOld.click(function() {
                 if (_opts.behavior.hideOnSelect)
                     hide();
-                if (_opts.events.cancel)
-                    _opts.events.cancel(_colorOld.toHex());
+                _parent.trigger("scp_cancel", [_color.toHex(), that]);
             });
-            if (_opts.placement.popup && _parent) {
+            if (_opts.placement.popup) {
                 $(window).resize(handleWindowResized);
             }
             if (_dom.modeSwitch) {
@@ -435,7 +483,13 @@
                     }
                 })
                 .keyup(function(e) {
-                    handleHexInputKeyup(e, false);
+                    if (e.keyCode === 13) {
+                        e.preventDefault();
+                        $(this).blur();
+                        _dom.sampleNew.click();
+                    } else {
+                        handleHexInputKeyup(e, false);
+                    }
                 });
         }
 
@@ -603,15 +657,9 @@
             displayNewColorSample();
             moveSquareMark(x, y);
         }
+        //endregion
 
-        /**
-         * Enables or disabled global text selection.
-         * @param {boolean} enabled
-         */
-        function toggleGlobalSelection(enabled) {
-            $(document.body).css({ webkitUserSelect: enabled ? _domProps.globalSelectionMode : "none" });
-        }
-
+        //region Color marks ans samples
         /**
          * Converts coordinates to color hue.
          * @param {number} x - X offset from circle left
@@ -690,7 +738,7 @@
             var size = _canvas.width;
             var ctx = _canvas.getContext("2d");
             ctx.clearRect(0, 0, size, size);
-            
+
             var imageData = ctx.createImageData(size, size);
             var data = imageData.data;
             for (var s = 0; s < size; s++) {
@@ -789,6 +837,31 @@
         }
 
         /**
+         * Moves circle and square marks.
+         */
+        function moveMarks() {
+            moveCircleMark();
+            moveSquareMark();
+        }
+
+        /**
+         * Sets old and new colors.
+         * @param {string} [color] - New color HTML hex representation; undefined = don't change.
+         * @param {string} [colorOld] - Old color HTML hex representation; undefined = don't change; null = set to no old color.
+         */
+        this.setColors = function(color, colorOld) {
+            if (color !== undefined)
+                _color = new SmallColorPicker.Color(color);
+            if (colorOld !== undefined)
+                _colorOld = colorOld === null ? null : new SmallColorPicker.Color(colorOld);
+            if (this.isVisible()) {
+                this.show();
+            }
+        };
+        //endregion
+
+        //region Helper functions
+        /**
          * Gets X from event.
          * @param {jQuery.Event} e - Event
          * @returns {number} - PageX
@@ -867,20 +940,42 @@
         }
 
         /**
-         * Moves circle and square marks.
+         * Enables or disabled global text selection.
+         * @param {boolean} enabled
          */
-        function moveMarks() {
-            moveCircleMark();
-            moveSquareMark();
+        function toggleGlobalSelection(enabled) {
+            $(document.body).css({ webkitUserSelect: enabled ? _domProps.globalSelectionMode : "none" });
+        }
+
+        /**
+         * Asserts that parent is exactly one elemtnt
+         * @param {jQuery} parent
+         */
+        function assertParentIsOneElement(parent) {
+            if (parent.length != 1)
+                throw "Color picker should have exactly one parent";
+        }
+        //endregion
+
+        //region Modes
+        /**
+         * Switches between color picker input modes.
+         * @param {SmallColorPicker.Mode} [mode] - Mode to set
+         */
+        function switchMode(mode) {
+            var newMode = mode !== undefined ? mode :
+                _mode == SmallColorPicker.Mode.COLOR ? SmallColorPicker.Mode.NUMBER : SmallColorPicker.Mode.COLOR;
+            if (_mode === newMode)
+                return;
+            _mode = newMode;
+            displayMode();
         }
 
         /**
          * Switches between color picker input modes.
+         * @param {SmallColorPicker.Mode} [mode] - Mode to set
          */
-        function switchMode() {
-            _mode = _mode == SmallColorPicker.Mode.COLOR ? SmallColorPicker.Mode.NUMBER : SmallColorPicker.Mode.COLOR;
-            displayMode();
-        }
+        this.switchMode = switchMode;
 
         /**
          * Displays controls for currently selected mode
@@ -894,6 +989,7 @@
                 displayNumericRgb();
                 displayNumericHsv();
                 displayNumericHex();
+                $("#s-c-p-txt-" + _id + "-hex", _dom.el).focus();
             } else {
                 _dom.el.removeClass("s-c-p-mode-num");
                 _dom.squareMark.show();
@@ -903,7 +999,9 @@
                 moveMarks();
             }
         }
+        //endregion
 
+        //region Inputs in numeric mode
         /**
          * Fills RGB text boxes with values from _color.
          */
@@ -952,7 +1050,9 @@
         function displayNumericHex() {
             $("#s-c-p-txt-" + _id + "-hex", _dom.el).val(_color.toHex());
         }
+        //endregion
 
+        //region Visibility
         /**
          * Gets state of the control.
          * @returns {boolean}
@@ -966,19 +1066,19 @@
          * @param {boolean} [animate] - Apply fade; default from _opts if none
          */
         function show(animate) {
-            if (!_dom) {
-                initialize();
-            }
+            var wasVisible = isVisible();
+            _dom.el.stop().css("display", "block");
             displayOldColorSample();
             displayNewColorSample();
             setPosition();
             displayMode();
+            if (wasVisible)
+                return;
             if (animate === undefined)
                 animate = _opts.behavior.animation;
             if (animate)
                 _dom.el.fadeIn(200);
-            else
-                _dom.el.show();
+            _parent.trigger("scp_show", [that]);
         }
 
         /**
@@ -986,22 +1086,29 @@
          * @param {boolean} [animate] - Apply fade; default from _opts if none
          */
         function hide(animate) {
+            if (!isVisible())
+                return;
+            _dom.el.stop();
             if (animate === undefined)
                 animate = _opts.behavior.animation;
             if (animate)
                 _dom.el.fadeOut(200);
             else
-                _dom.el.show();
+                _dom.el.hide();
+            _parent.trigger("scp_hide", [that]);
         }
 
         /**
          * Hides or shows color picker.
+         * @param {boolean} [visible] - Visible state
          */
-        this.toggle = function() {
-            if (this.isVisible())
-                this.hide();
-            else
+        this.toggle = function(visible) {
+            if (visible === undefined)
+                visible = !this.isVisible();
+            if (visible)
                 this.show();
+            else
+                this.hide();
         };
 
         /**
@@ -1021,33 +1128,14 @@
         this.hide = hide;
 
         /**
-         * Switches between color picker input modes.
-         */
-        this.switchMode = switchMode;
-
-        /**
-         * Sets old and new colors.
-         * @param {string} [color] - New color HTML hex representation; undefined = don't change.
-         * @param {string} [colorOld] - Old color HTML hex representation; undefined = don't change; null = set to no old color.
-         */
-        this.setColors = function(color, colorOld) {
-            if (color !== undefined)
-                _color = new SmallColorPicker.Color(color);
-            if (colorOld !== undefined)
-                _colorOld = colorOld === null ? null : new SmallColorPicker.Color(colorOld);
-            if (this.isVisible()) {
-                this.show();
-            }
-        };
-
-        /**
          * Gets or sets color picker parent.
          * @param {HTMLElement|jQuery|string} [parent] - New parent (element or jQuery selector)
          * @returns {jQuery} - Parent element
-         * @throws {string} Will throw an error if the picker is not in popup mode;
+         * @throws {string} Will throw an error if the picker is not in popup mode or parent is not one
          */
         this.parent = function(parent) {
             if (parent) {
+                assertParentIsOneElement($(parent));
                 if (this.isVisible()) {
                     this.hide(false);
                     _parent = $(parent);
@@ -1057,7 +1145,8 @@
                 }
             }
             return _parent;
-        }
+        };
+        //endregion
     };
 
 })(window.jQuery, document, window);
