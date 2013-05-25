@@ -62,7 +62,7 @@ $(".color-btn").smallColorPicker({
         switchModeToCol: "Show color wheel"
     },
     behavior: {
-        rotate: true, // whether to rotate color wheel
+        rotate: true, // whether to rotate color shades square
         hideOnSelect: true, // auto hide picker on color select
         mode: SmallColorPicker.Mode.COLOR, // default color selection mode 
         switchMode: true, // whether the user can switch input mode
