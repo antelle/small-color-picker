@@ -90,6 +90,17 @@ picker.parent("#btn2"); // change picker parent
 picker.destroy(); // completely remove color picker 
 ```
 
+### Events
+Here's how to listen the picker events:
+```javascript
+$(".color-btn").on {
+    scp_ok: function(color, picker) {  }, // color is selected
+    scp_cancel: function(color, picker) {  }, // color selection cancelled
+    scp_show: function(picker) {  }, // picker is shown
+    scp_hide: function(picker) {  } // picker is hidden
+}
+```
+
 ## Building
 
 Use grunt to build this project. It will put the result into ../build-v1 folder. 
