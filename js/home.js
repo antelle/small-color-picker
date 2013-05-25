@@ -6,10 +6,10 @@ $(function() {
 
     try {
         $("#color-selector-box").html("");
-        var colorPicker = window.colorPicker = new SmallColorPicker.CirclePicker({
+        $("#color-selector-box").smallColorPicker({
             placement: {
                 position: "static",
-                parent: $("#color-selector-box")
+                popup: false
             },
             colors: {
                 colorOld: "#990e8d",
@@ -17,17 +17,15 @@ $(function() {
             },
             behavior: {
                 hideOnSelect: false
-            },
-            events: {
-                ok: function(color) {
+            }
+        }).on({
+                scp_ok: function(picker, color) {
                     showColorPickerText("Selected: " + color);
                 },
-                cancel: function() {
+                scp_cancel: function() {
                     showColorPickerText("Cancelled");
                 }
-            }
-        });
-        colorPicker.show();
+            });
     } catch (err) {
         $("#color-selector-box")
             .addClass("text-error")
@@ -39,40 +37,16 @@ $(function() {
         var color = new SmallColorPicker.Color($("b", this).css("background-color")).toHex();
         $("#span-code-style span").html(cls);
         $("#span-code-color span").html(color);
-        colorPicker.setColors(color);
+        $("#color-selector-box").smallColorPicker().setColors(color);
     });
 
-    $("#btn-picker").click(function() {
-        var el = $(this);
-        var bgEl = $("b", this);
-        var color = new SmallColorPicker.Color(bgEl.css("background-color")).toHex();
-        var picker = window.picker;
-        if (!picker) {
-            picker = window.picker = new SmallColorPicker.CirclePicker({
-                placement: {
-                    parent: this,
-                    popup: true
-                },
-                events: {
-                    ok: function(resultColor) {
-                        bgEl.css("background-color", resultColor);
-                        el.contents().last().remove();
-                        el.append(resultColor);
-                        $("#color-selector-box").fadeTo(300, 1);
-                    },
-                    cancel: function() {
-                        $("#color-selector-box").fadeTo(300, 1);
-                    }
-                }
-            });
-        } else if (picker.isVisible()) {
-            picker.hide();
-            $("#color-selector-box").fadeTo(300, 1);
-            return;
+    $("#btn-picker").smallColorPicker({}).on({
+        scp_show: function() {
+            $("#color-selector-box").fadeTo(200, 0.03);
+        },
+        scp_hide: function() {
+            $("#color-selector-box").fadeTo(500, 1);
         }
-        picker.setColors(color, color);
-        picker.show();
-        $("#color-selector-box").fadeTo(300, 0.03);
     });
 
     $(".link-toggle-source").click(function(e) {
