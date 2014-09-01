@@ -94,8 +94,8 @@ picker.destroy(); // completely remove color picker
 Here's how to listen the picker events:
 ```javascript
 $(".color-btn").on {
-    scp_ok: function(color, picker) {  }, // color is selected
-    scp_cancel: function(color, picker) {  }, // color selection cancelled
+    scp_ok: function(picker, color) {  }, // color is selected
+    scp_cancel: function(picker, color) {  }, // color selection cancelled
     scp_show: function(picker) {  }, // picker is shown
     scp_hide: function(picker) {  } // picker is hidden
 }
