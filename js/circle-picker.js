@@ -341,7 +341,7 @@
                 clearTimeout(_resizeTimeout);
                 _resizeTimeout = null;
             }
-            var parentPosition = _parent.position(), parentWidth = _parent.outerWidth(), parentHeight = _parent.outerHeight(),
+            var parentPosition = _parent.offset(), parentWidth = _parent.outerWidth(), parentHeight = _parent.outerHeight(),
                 windowHeight = $(window).outerHeight(), windowWidth = $(window).width(),
                 width = _dom.el.outerWidth(), height = _dom.el.outerHeight(),
                 paddingToPageBorder = 10, innerArrowPadding = 1, smallPadding = 1,
